@@ -203,6 +203,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 496391450}
+  - component: {fileID: 496391451}
   m_Layer: 0
   m_Name: '@UI_Play'
   m_TagString: Untagged
@@ -226,6 +227,21 @@ Transform:
   - {fileID: 1654186530}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &496391451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 496391449}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad09581868dca6b48b827894c9e26f84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Tr_Grid: {fileID: 273002930}
+  G_Tile: {fileID: 6351598088197818474, guid: 3e215ceac664f1d439653940278cf792, type: 3}
+  Grid_Slot_Count: 03000000040000000500000006000000050000000400000003000000
 --- !u!1 &500184469
 GameObject:
   m_ObjectHideFlags: 0
