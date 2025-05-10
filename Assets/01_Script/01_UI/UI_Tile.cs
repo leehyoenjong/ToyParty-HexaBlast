@@ -38,6 +38,7 @@ public class UI_Tile : MonoBehaviour
         Ui_Tile_Slot = slot;
         Rt_Rect.SetParent(Ui_Tile_Slot.GetRect);
         Rt_Rect.localPosition = Vector3.zero;
+        slot.SetTile(this);
     }
 
     private void SetupEventTrigger()

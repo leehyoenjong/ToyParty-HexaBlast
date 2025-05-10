@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -27,17 +28,13 @@ public class TileManager : MonoBehaviour
         set => secondTouch_Tile = value;
     }
 
-    // 8방향 델타
-    (int dx, int dy)[] i_Directions = new (int, int)[]
+    // 4방향(가로, 세로, 대각선2개)만 검사 (양방향 포함)
+    (int dx, float dy)[] i_Directions = new (int, float)[]
     {
-        (0, 1),    // 위
-        (1, 1),    // 오른쪽 위
-        (1, 0),    // 오른쪽
-        (1, -1),   // 오른쪽 아래
-        (0, -1),   // 아래
-        (-1, -1),  // 왼쪽 아래
-        (-1, 0),   // 왼쪽
-        (-1, 1),   // 왼쪽 위
+        (1, 0f),   // 가로
+        (0, 1f),   // 세로
+        (1, 1f),   // 대각선 ↘
+        (1, -1f),  // 대각선 ↗
     };
 
     [Header("기본 색 타일")]
@@ -62,16 +59,7 @@ public class TileManager : MonoBehaviour
         var color = start.GetTile.Get_Tile_Color();
         (int, float) startPoint = start.GetPoint;
 
-        // 4방향(가로, 세로, 대각선2개)만 검사 (양방향 포함)
-        (int dx, float dy)[] directions = new (int, float)[]
-        {
-            (1, 0f),   // 가로
-            (0, 1f),   // 세로
-            (1, 1f),   // 대각선 ↘
-            (1, -1f),  // 대각선 ↗
-        };
-
-        foreach (var (dx, dy) in directions)
+        foreach (var (dx, dy) in i_Directions)
         {
             List<UI_Tile_Slot> line = new List<UI_Tile_Slot>();
             line.Add(start);
@@ -129,24 +117,47 @@ public class TileManager : MonoBehaviour
     /// <summary>
     /// 전체 슬롯에 담겨있는 타일이랑 같은 타일들이 나열되어 있는지 체크 (직선 연속만 인정)
     /// </summary>
-    public void All_Scan()
+    public bool All_Scan(UI_Tile[] tiles = null)
     {
+        bool isremove = false;
         HashSet<UI_Tile_Slot> removeSet = new HashSet<UI_Tile_Slot>();
 
         foreach (var item in L_Tile_Slot)
         {
-            if (item.GetTile == null) continue;
+            if (item.GetTile == null)
+            {
+                continue;
+            }
+
             var group = ScanLineGroup(item);
             if (group.Count >= 3)
             {
                 foreach (var slot in group)
+                {
                     removeSet.Add(slot);
+                }
             }
         }
 
         // 삭제
         foreach (var slot in removeSet)
+        {
             slot.RemoveTile();
+            if (tiles == null)
+            {
+                continue;
+            }
+
+            //타일처리
+            foreach (var tile in tiles)
+            {
+                if (tile.Get_Tile_Slot == slot)
+                {
+                    isremove = true;
+                }
+            }
+        }
+        return isremove;
     }
 
     /// <summary>
@@ -163,19 +174,45 @@ public class TileManager : MonoBehaviour
     /// </summary>
     public void SwapTiles()
     {
-        if (FirstTouch_Tile != null && SecondTouch_Tile != null)
+        if (FirstTouch_Tile == null || SecondTouch_Tile == null)
         {
-            // 각 타일의 슬롯 가져오기
-            var firstslot = FirstTouch_Tile.Get_Tile_Slot;
-            var secondslot = SecondTouch_Tile.Get_Tile_Slot;
-
-            // 위치 교환
-            FirstTouch_Tile.Set_Swap(secondslot);
-            SecondTouch_Tile.Set_Swap(firstslot);
-            Debug.Log("위치이동");
-
-            Reset();
+            return;
         }
+
+        // 각 타일의 슬롯 가져오기
+        var firstslot = FirstTouch_Tile.Get_Tile_Slot;
+        var secondslot = SecondTouch_Tile.Get_Tile_Slot;
+
+        // 위치 교환
+        FirstTouch_Tile.Set_Swap(secondslot);
+        SecondTouch_Tile.Set_Swap(firstslot);
+
+        Debug.Log("위치이동");
+        StartCoroutine(IE_Swap());
+    }
+
+    /// <summary>
+    /// 스캔 후 리셋 
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator IE_Swap()
+    {
+        // 각 타일의 슬롯 가져오기
+        var firstslot = FirstTouch_Tile.Get_Tile_Slot;
+        var secondslot = SecondTouch_Tile.Get_Tile_Slot;
+
+        var first = FirstTouch_Tile;
+        var second = SecondTouch_Tile;
+
+        Debug.Log("제거 체크");
+        if (!All_Scan(new UI_Tile[] { first, second }))
+        {
+            yield return new WaitForSeconds(1f);
+            Debug.Log("위치 원상복구");
+            first.Set_Swap(secondslot);
+            second.Set_Swap(firstslot);
+        }
+        Reset();
     }
 
     /// <summary>
