@@ -24,6 +24,13 @@ public class UI_Tile : MonoBehaviour
     }
 
     /// <summary>
+    /// 종류 및 색깔 가져오기
+    /// </summary>
+    /// <returns></returns>
+    public E_Tile_Color Get_Tile_Color() => En_Tile_Color;
+    public E_Tile_Kind Get_Tile_Kind() => En_Tile_Kind;
+
+    /// <summary>
     /// 부모위치 변경
     /// </summary>
     public void Set_Swap(UI_Tile_Slot slot)
@@ -37,9 +44,13 @@ public class UI_Tile : MonoBehaviour
     {
         // 이벤트 트리거 엔트리 목록 초기화
         if (Et_EventTrigger.triggers == null)
+        {
             Et_EventTrigger.triggers = new System.Collections.Generic.List<EventTrigger.Entry>();
+        }
         else
+        {
             Et_EventTrigger.triggers.Clear(); // 기존 트리거 제거
+        }
 
         // PointerDown 이벤트 추가 (터치/클릭 시작)
         EventTrigger.Entry entryPointerDown = new EventTrigger.Entry();

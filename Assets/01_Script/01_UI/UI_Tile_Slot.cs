@@ -8,14 +8,19 @@ public class UI_Tile_Slot : MonoBehaviour
     public RectTransform GetRect => Rt_Slot;
 
     UI_Tile Ui_Tile;
+    public UI_Tile GetTile => Ui_Tile;
+
+    (int, float) i_Point;
+    public (int, float) GetPoint => i_Point;
 
     /// <summary>
     /// 초기화
     /// </summary>
     /// <param name="createpos"></param>
-    public void Initailzed(Vector2 createpos)
+    public void Initailzed(Vector2 createpos, (int, float) point)
     {
         Rt_Slot.anchoredPosition = createpos;
+        i_Point = point;
     }
 
     /// <summary>
@@ -29,5 +34,17 @@ public class UI_Tile_Slot : MonoBehaviour
     public void SetTile(UI_Tile uI_Tile)
     {
         Ui_Tile = uI_Tile;
+    }
+
+    /// <summary>
+    /// 타일 삭제
+    /// </summary>
+    public void RemoveTile()
+    {
+        if (Ui_Tile != null)
+        {
+            GameObject.Destroy(Ui_Tile.gameObject);
+            Ui_Tile = null;
+        }
     }
 }

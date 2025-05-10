@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +7,8 @@ public class PlayManager : MonoBehaviour
     public static PlayManager instance;
     [SerializeField] int StageNum;
     const string str_Stage = "Stage_Data_{0}";
+
+    [SerializeField] UI_Grid Ui_Grid;
 
     Dictionary<int, Stage_Data> D_Stage_Data = new Dictionary<int, Stage_Data>();
 
@@ -25,5 +28,17 @@ public class PlayManager : MonoBehaviour
             D_Stage_Data.Add(StageNum, data);
         }
         return D_Stage_Data[StageNum];
+    }
+
+    private void Start()
+    {
+        StartCoroutine(IE_Play());
+    }
+
+    IEnumerator IE_Play()
+    {
+        Ui_Grid.Create_Tile_Slot();
+        yield return new WaitForSeconds(1f);
+        TileManager.instance.All_Scan();
     }
 }
