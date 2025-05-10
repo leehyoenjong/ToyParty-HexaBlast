@@ -4,12 +4,19 @@ using UnityEngine.UI;
 
 public class UI_Tile : MonoBehaviour
 {
+
+    [Header("타일 정보")]
+    [SerializeField] E_Tile_Color En_Tile_Color;
+    [SerializeField] E_Tile_Kind En_Tile_Kind;
+
+    [Header("UI")]
     [SerializeField] RectTransform Rt_Rect;
     [SerializeField] EventTrigger Et_EventTrigger;
+
+    // 부모 슬롯
     UI_Tile_Slot Ui_Tile_Slot;
-    
     public UI_Tile_Slot Get_Tile_Slot => Ui_Tile_Slot;
-    
+
     public void Initailzed(UI_Tile_Slot slot)
     {
         Ui_Tile_Slot = slot;

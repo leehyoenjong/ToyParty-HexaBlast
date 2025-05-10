@@ -11,9 +11,6 @@ public class UI_Grid : MonoBehaviour
     [SerializeField] GameObject G_Tile_Slot;
     [SerializeField] GameObject G_Tile;
 
-    [Header("타일 정보")]
-    [SerializeField] int[] Grid_Slot_Count;
-
     void Start()
     {
         Create_Tile_Slot();
@@ -29,17 +26,23 @@ public class UI_Grid : MonoBehaviour
         var width = rt.rect.width;
         var height = rt.rect.width;
 
+        var stagedata = PlayManager.instance.Get_Stage_Data();
+
         //최대 갯수 
-        var max = Grid_Slot_Count.Length;
+        var max = stagedata.St_Tile_Stage.Length;
 
         //중앙값 가져오기 
         int middlenum_x = max / 2;
 
         for (int i = 0; i < max; i++)
         {
+            var curstage = stagedata.St_Tile_Stage[i];
+
             //행 갯수에 다른 중앙값 처리 
-            var maxy = Grid_Slot_Count[i];
+            var maxy = curstage.Grid_Slot_Count;
             int middlenum_y = maxy / 2;
+
+            var directtile = curstage.St_Tile_Directs;
 
             //타일 생성
             for (int j = 0; j < maxy; j++)
@@ -56,17 +59,32 @@ public class UI_Grid : MonoBehaviour
                 //위치 값 설정 및 초가화 작업
                 var pos = new Vector2(x, y);
                 slot.Initailzed(pos);
+
+                //강제 타일 생성
+                if (directtile.Count > 0)
+                {
+                    //번호 맞는지 체크
+                    var idx = directtile.FindIndex(x => x.Point == j);
+                    if (idx == -1)
+                    {
+                        continue;
+                    }
+
+                    //타일 생성
+                    var g_tile = directtile[idx].G_Tile;
+                    CreateTile(slot, g_tile);
+                }
             }
         }
 
         //타일 생성
-        Create_Tile();
+        Create_Tile_List();
     }
 
     /// <summary>
-    /// 타일 생성
+    /// 기본 타일 생성
     /// </summary>
-    void Create_Tile()
+    void Create_Tile_List()
     {
         //슬롯 리스트 가져오기 
         var slotlist = TileManager.instance.Get_Tile_Slot;
@@ -76,11 +94,27 @@ public class UI_Grid : MonoBehaviour
         {
             var item = slotlist[i];
 
-            //타일 생성
-            var tile = Instantiate(G_Tile, item.GetRect).GetComponent<UI_Tile>();
-            TileManager.instance.Get_Tile.Add(tile);
+            //이미 타일 생성되어 있는지 체크
+            if (item.CheckTile())
+            {
+                continue;
+            }
 
-            tile.Initailzed(item);
+            //기본 타일 랜덤생성
+            CreateTile(item, TileManager.instance.Get_Tile_Basic_Random());
         }
+    }
+
+    /// <summary>
+    /// 타일 생성 
+    /// </summary>
+    void CreateTile(UI_Tile_Slot slot, GameObject g_Tile)
+    {
+        //타일 생성
+        var tile = Instantiate(g_Tile, slot.GetRect).GetComponent<UI_Tile>();
+        TileManager.instance.Get_Tile.Add(tile);
+
+        tile.Initailzed(slot);
+        slot.SetTile(tile);
     }
 }

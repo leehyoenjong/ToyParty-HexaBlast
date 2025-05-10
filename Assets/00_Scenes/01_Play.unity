@@ -242,7 +242,6 @@ MonoBehaviour:
   Tr_Grid: {fileID: 273002930}
   G_Tile_Slot: {fileID: 6351598088197818474, guid: 3e215ceac664f1d439653940278cf792, type: 3}
   G_Tile: {fileID: 6351598088197818474, guid: 590d9ffc88b8546219f6458a81741f7b, type: 3}
-  Grid_Slot_Count: 03000000040000000500000006000000050000000400000003000000
 --- !u!1 &500184469
 GameObject:
   m_ObjectHideFlags: 0
@@ -585,6 +584,7 @@ GameObject:
   - component: {fileID: 1384873846}
   - component: {fileID: 1384873845}
   - component: {fileID: 1384873847}
+  - component: {fileID: 1384873848}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -604,6 +604,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f604b6368e75b49b5b9c01acf0eae036, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  G_Tile:
+  - {fileID: 6351598088197818474, guid: 590d9ffc88b8546219f6458a81741f7b, type: 3}
+  - {fileID: 6351598088197818474, guid: 32f872e35e79ac94eabb667456eab80b, type: 3}
+  - {fileID: 6351598088197818474, guid: 566e4df6e6c15254fa78f24a00d912aa, type: 3}
+  - {fileID: 6351598088197818474, guid: ffd3d5859e57ae448be3f269d0bfecf2, type: 3}
 --- !u!4 &1384873846
 Transform:
   m_ObjectHideFlags: 0
@@ -631,6 +636,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08ef0e4b7e1e0459fb7dc63fe9430951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1384873848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1384873844}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 767adc47d67dcb14b9c53d39be2633a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  StageNum: 21
 --- !u!1 &1654186529
 GameObject:
   m_ObjectHideFlags: 0

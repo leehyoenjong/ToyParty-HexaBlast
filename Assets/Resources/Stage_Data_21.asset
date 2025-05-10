@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: feab4abfd00bd4c4e8bba03479f4ab71, type: 3}
+  m_Name: Stage_Data_21
+  m_EditorClassIdentifier: 
+  StageNum: 21
+  St_Tile_Stage:
+  - Grid_Slot_Count: 3
+    St_Tile_Directs: []
+  - Grid_Slot_Count: 4
+    St_Tile_Directs: []
+  - Grid_Slot_Count: 5
+    St_Tile_Directs: []
+  - Grid_Slot_Count: 6
+    St_Tile_Directs: []
+  - Grid_Slot_Count: 5
+    St_Tile_Directs: []
+  - Grid_Slot_Count: 4
+    St_Tile_Directs: []
+  - Grid_Slot_Count: 3
+    St_Tile_Directs: []
