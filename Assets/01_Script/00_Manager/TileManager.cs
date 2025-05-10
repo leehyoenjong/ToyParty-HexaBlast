@@ -117,7 +117,7 @@ public class TileManager : MonoBehaviour
     /// <summary>
     /// 전체 슬롯에 담겨있는 타일이랑 같은 타일들이 나열되어 있는지 체크 (직선 연속만 인정)
     /// </summary>
-    public bool All_Scan(UI_Tile[] tiles = null)
+    public bool All_Scan_Boom(UI_Tile[] tiles = null)
     {
         bool isremove = false;
         HashSet<UI_Tile_Slot> removeSet = new HashSet<UI_Tile_Slot>();
@@ -158,6 +158,84 @@ public class TileManager : MonoBehaviour
             }
         }
         return isremove;
+    }
+
+
+    /// <summary>
+    /// 매치 성공 후 빈자리 찾아가기
+    /// </summary>
+    public void All_Scan_Move()
+    {
+        //L_Tile_Slot 리스트중 item.GetTile이 없는 것들은
+        //바로 위에 있는 UI_Tile_Slot의 GetTile을 Set_Swap함수를 이용해서 자신의 타일로 이동시키기
+        //만약 바로 위에 GetTile이 없다면 자신기준 오른쪽 상단에 있는 UI_Tile_Slot의 것을 가져오기
+        //이것을 반복해 빈공간이 없게 수정
+        bool moved = true;
+        while (true)
+        {
+            //더 이상 이동이 없을때까지 반복 
+            if(!moved)
+            {
+                break;
+            }
+
+            moved = false;
+            foreach (var item in L_Tile_Slot)
+            {
+                if (item.GetTile != null)
+                {
+                    continue;
+                }
+
+                // 현재 슬롯의 좌표
+                var currentPoint = item.GetPoint;
+                bool filledSpace = false;
+
+                // 같은 열에서 위에 있는 모든 타일 검사하기 (가장 가까운 타일부터)
+                float checkY = currentPoint.Item2 + 1f;
+                while (!filledSpace)
+                {
+                    var aboveSlot = L_Tile_Slot.Find(slot =>
+                        slot.GetPoint.Item1 == currentPoint.Item1 &&
+                        Mathf.Approximately(slot.GetPoint.Item2, checkY));
+
+                    // 위쪽으로 더 이상 검사할 슬롯이 없는 경우 종료
+                    if (aboveSlot == null)
+                    {
+                        break;
+                    }
+
+                    // 타일이 있으면 이동
+                    if (aboveSlot.GetTile != null)
+                    {
+                        aboveSlot.GetTile.Set_Swap(item);
+                        moved = true;
+                        filledSpace = true;
+                        break;
+                    }
+
+                    // 다음 위치 검사
+                    checkY += 1f;
+                }
+
+                // 같은 열에서 타일을 찾지 못했다면 오른쪽 상단 검사
+                if (!filledSpace)
+                {
+                    // 오른쪽 상단 슬롯 찾기
+                    var topRightSlot = L_Tile_Slot.Find(slot =>
+                        slot.GetPoint.Item1 == currentPoint.Item1 + 1f &&
+                        Mathf.Approximately(slot.GetPoint.Item2, currentPoint.Item2 + 0.5f));
+
+                    if (topRightSlot != null && topRightSlot.GetTile != null)
+                    {
+                        // 오른쪽 상단 슬롯에 타일이 있으면 이동
+                        topRightSlot.GetTile.Set_Swap(item);
+                        moved = true;
+                        continue;
+                    }
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -205,7 +283,7 @@ public class TileManager : MonoBehaviour
         var second = SecondTouch_Tile;
 
         Debug.Log("제거 체크");
-        if (!All_Scan(new UI_Tile[] { first, second }))
+        if (!All_Scan_Boom(new UI_Tile[] { first, second }))
         {
             yield return new WaitForSeconds(1f);
             Debug.Log("위치 원상복구");
@@ -213,6 +291,10 @@ public class TileManager : MonoBehaviour
             second.Set_Swap(firstslot);
         }
         Reset();
+
+        //빈자리 채우기
+        yield return new WaitForSeconds(1f);
+        All_Scan_Move();
     }
 
     /// <summary>

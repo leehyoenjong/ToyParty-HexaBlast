@@ -39,6 +39,8 @@ public class PlayManager : MonoBehaviour
     {
         Ui_Grid.Create_Tile_Slot();
         yield return new WaitForSeconds(1f);
-        TileManager.instance.All_Scan();
+        TileManager.instance.All_Scan_Boom();
+        yield return new WaitForSeconds(1f);
+        TileManager.instance.All_Scan_Move();
     }
 }
