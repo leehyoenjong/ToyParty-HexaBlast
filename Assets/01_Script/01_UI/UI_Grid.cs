@@ -52,16 +52,12 @@ public class UI_Grid : MonoBehaviour
                 float y = maxy % 2 == 1 ? (j - middlenum_y) : (middlenum_y - j - 0.5f);
                 y *= height;
 
-                // 육각형 odd-q offset: 홀수 열은 y+0.5
-                float logicY = j;
-                if (i % 2 == 1)
-                {
-                    logicY = j + 0.5f;
-                }
 
                 //위치 값 설정 및 초가화 작업
                 var pos = new Vector2(x, y);
-                slot.Initailzed(pos, (i, logicY));
+                slot.Initailzed(pos, (x * 0.01f, y * 0.01f));
+                slot.gameObject.name = $"Slot_{x * 0.01f}_{y * 0.01f}";
+                Debug.Log($"생성위치 :{x * 0.01f},{y * 0.01f}");
 
                 //강제 타일 생성
                 if (directtile.Count > 0)

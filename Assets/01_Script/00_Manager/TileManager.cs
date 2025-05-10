@@ -29,12 +29,12 @@ public class TileManager : MonoBehaviour
     }
 
     // 4방향(가로, 세로, 대각선2개)만 검사 (양방향 포함)
-    (int dx, float dy)[] i_Directions = new (int, float)[]
+    (float dx, float dy)[] i_Directions = new (float, float)[]
     {
-        (1, 0f),   // 가로
-        (0, 1f),   // 세로
-        (1, 1f),   // 대각선 ↘
-        (1, -1f),  // 대각선 ↗
+        (1f, 0f),    // 가로
+        (0f, 1f),    // 세로
+        (1f, 0.5f),  // 대각선 우상단
+        (1f, -0.5f), // 대각선 우하단
     };
 
     [Header("기본 색 타일")]
@@ -57,7 +57,7 @@ public class TileManager : MonoBehaviour
         }
 
         var color = start.GetTile.Get_Tile_Color();
-        (int, float) startPoint = start.GetPoint;
+        var startPoint = start.GetPoint;
 
         foreach (var (dx, dy) in i_Directions)
         {
@@ -65,8 +65,8 @@ public class TileManager : MonoBehaviour
             line.Add(start);
 
             // +방향
-            int nx = startPoint.Item1 + dx;
-            float ny = startPoint.Item2 + dy;
+            var nx = startPoint.Item1 + dx;
+            var ny = startPoint.Item2 + dy;
             while (true)
             {
                 var neighbor = L_Tile_Slot.Find(slot => slot.GetPoint.Item1 == nx && Mathf.Approximately(slot.GetPoint.Item2, ny));

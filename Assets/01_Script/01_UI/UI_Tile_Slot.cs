@@ -10,14 +10,14 @@ public class UI_Tile_Slot : MonoBehaviour
     UI_Tile Ui_Tile;
     public UI_Tile GetTile => Ui_Tile;
 
-    (int, float) i_Point;
-    public (int, float) GetPoint => i_Point;
+    (float, float) i_Point;
+    public (float, float) GetPoint => i_Point;
 
     /// <summary>
     /// 초기화
     /// </summary>
     /// <param name="createpos"></param>
-    public void Initailzed(Vector2 createpos, (int, float) point)
+    public void Initailzed(Vector2 createpos, (float, float) point)
     {
         Rt_Slot.anchoredPosition = createpos;
         i_Point = point;
