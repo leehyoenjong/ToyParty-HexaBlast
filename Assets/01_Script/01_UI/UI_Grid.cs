@@ -79,6 +79,8 @@ public class UI_Grid : MonoBehaviour
             //타일 생성
             var tile = Instantiate(G_Tile, item.GetRect).GetComponent<UI_Tile>();
             TileManager.instance.Get_Tile.Add(tile);
+
+            tile.Initailzed(item);
         }
     }
 }
