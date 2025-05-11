@@ -168,13 +168,6 @@ public class TileManager : MonoBehaviour
                 Set_Huddle_Tile_Active(group);
             }
         }
-
-        // 디버깅 - 삭제될 타일 개수
-        if (hs_remove_tile.Count > 0)
-        {
-            Debug.Log($"삭제될 타일 개수: {hs_remove_tile.Count}");
-        }
-
         // 삭제
         bool isremove = false;
         foreach (var slot in hs_remove_tile)
@@ -182,6 +175,7 @@ public class TileManager : MonoBehaviour
             slot.RemoveTile();
             isremove = Check_TargetSlot(tiles, slot, isremove);
         }
+        ClearManager.instance.Update_Clear_Count();
         return isremove;
     }
 
@@ -522,14 +516,19 @@ public class TileManager : MonoBehaviour
         var first = FirstTouch_Tile;
         var second = SecondTouch_Tile;
 
-        if (!All_Scan_Boom(new UI_Tile[] { first, second }))
+        var isboom = All_Scan_Boom(new UI_Tile[] { first, second });
+        Reset();
+        if (!isboom)
         {
             yield return new WaitForSeconds(0.5f);
             Debug.Log("위치 원상복구");
             first.Set_Swap(secondslot);
             second.Set_Swap(firstslot);
+            PlayManager.instance.GetStay = false;
+            yield break;
         }
-        Reset();
+        //원상복구가 아니라면 이동횟수 차감처리 
+        ClearManager.instance.Update_Move_Count();
         StartCoroutine(IE_Move_And_Boom());
     }
 
@@ -589,6 +588,7 @@ public class TileManager : MonoBehaviour
             yield return wait;
         }
 
+        ClearManager.instance.Set_Clear();
         yield return wait;
         PlayManager.instance.GetStay = false;
     }

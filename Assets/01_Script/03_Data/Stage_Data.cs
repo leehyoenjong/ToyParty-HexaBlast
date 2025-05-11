@@ -5,8 +5,18 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Stage_Data", menuName = "ScriptableObjects/Stage Data")]
 public class Stage_Data : ScriptableObject
 {
+    [Header("스테이지 정보")]
     public int StageNum;
     public ST_Tile_Stage[] St_Tile_Stage;
+
+    [Header("클리어 정보")]
+    public Sprite Sp_Clear_ICON;
+    public int iClear_Count;
+    public E_Tile_Kind Clear_Kind;
+
+
+    [Header("이동 횟수")]
+    public int iMoveCount;
 
     //ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
     [Serializable]

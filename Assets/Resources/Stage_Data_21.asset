@@ -48,3 +48,7 @@ MonoBehaviour:
       Index: 3
   - Grid_Slot_Count: 3
     St_Tile_Directs: []
+  Sp_Clear_ICON: {fileID: 21300000, guid: a9c8870c67557804eb957850ae834ce4, type: 3}
+  iClear_Count: 10
+  Clear_Kind: 1
+  iMoveCount: 18

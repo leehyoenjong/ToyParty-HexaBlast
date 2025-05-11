@@ -8,8 +8,11 @@ public class PlayManager : MonoBehaviour
     [SerializeField] int StageNum;
     const string str_Stage = "Stage_Data_{0}";
 
+    [Header("필요정보")]
     [SerializeField] UI_Grid Ui_Grid;
     public UI_Grid Get_UI_Grid() => Ui_Grid;
+
+    //ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
 
     Dictionary<int, Stage_Data> D_Stage_Data = new Dictionary<int, Stage_Data>();
 
@@ -41,6 +44,7 @@ public class PlayManager : MonoBehaviour
     private void Start()
     {
         StartCoroutine(IE_Play());
+        ClearManager.instance.Initiailzed();
     }
 
     IEnumerator IE_Play()
