@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TileManager : MonoBehaviour
@@ -164,78 +165,160 @@ public class TileManager : MonoBehaviour
     /// <summary>
     /// 매치 성공 후 빈자리 찾아가기
     /// </summary>
-    public void All_Scan_Move()
+    public bool All_Scan_Move()
     {
-        //L_Tile_Slot 리스트중 item.GetTile이 없는 것들은
-        //바로 위에 있는 UI_Tile_Slot의 GetTile을 Set_Swap함수를 이용해서 자신의 타일로 이동시키기
-        //만약 바로 위에 GetTile이 없다면 자신기준 오른쪽 상단에 있는 UI_Tile_Slot의 것을 가져오기
-        //이것을 반복해 빈공간이 없게 수정
-        bool moved = true;
+        bool isMove = false;
+        bool checkmove = true;
         while (true)
         {
-            //더 이상 이동이 없을때까지 반복 
-            if(!moved)
+            if (!checkmove)
             {
                 break;
             }
+            checkmove = false;
 
-            moved = false;
-            foreach (var item in L_Tile_Slot)
+            //L_Tile_Slot를 딕셔너리 형태로 key가 GetPoint의 item1, value가 리스트형태로 GetPoint의 item2를 가지는 딕셔너리 생성
+            var dic = L_Tile_Slot
+                        .GroupBy(slot => slot.GetPoint.Item1)
+                        .ToDictionary(group => group.Key, group => group.Select(slot => slot).ToList());
+
+            //위에서 아래로
+            foreach (var item in dic)
             {
-                if (item.GetTile != null)
+                var slot = item.Value;
+                //제일 아래부터 체크 (Item2가 작은 것부터 정렬)
+                var orderedSlots = slot.OrderBy(x => x.GetPoint.Item2).ToList();
+
+                foreach (var items in orderedSlots)
                 {
-                    continue;
-                }
-
-                // 현재 슬롯의 좌표
-                var currentPoint = item.GetPoint;
-                bool filledSpace = false;
-
-                // 같은 열에서 위에 있는 모든 타일 검사하기 (가장 가까운 타일부터)
-                float checkY = currentPoint.Item2 + 1f;
-                while (!filledSpace)
-                {
-                    var aboveSlot = L_Tile_Slot.Find(slot =>
-                        slot.GetPoint.Item1 == currentPoint.Item1 &&
-                        Mathf.Approximately(slot.GetPoint.Item2, checkY));
-
-                    // 위쪽으로 더 이상 검사할 슬롯이 없는 경우 종료
-                    if (aboveSlot == null)
+                    if (items.GetTile != null)
                     {
-                        break;
-                    }
-
-                    // 타일이 있으면 이동
-                    if (aboveSlot.GetTile != null)
-                    {
-                        aboveSlot.GetTile.Set_Swap(item);
-                        moved = true;
-                        filledSpace = true;
-                        break;
-                    }
-
-                    // 다음 위치 검사
-                    checkY += 1f;
-                }
-
-                // 같은 열에서 타일을 찾지 못했다면 오른쪽 상단 검사
-                if (!filledSpace)
-                {
-                    // 오른쪽 상단 슬롯 찾기
-                    var topRightSlot = L_Tile_Slot.Find(slot =>
-                        slot.GetPoint.Item1 == currentPoint.Item1 + 1f &&
-                        Mathf.Approximately(slot.GetPoint.Item2, currentPoint.Item2 + 0.5f));
-
-                    if (topRightSlot != null && topRightSlot.GetTile != null)
-                    {
-                        // 오른쪽 상단 슬롯에 타일이 있으면 이동
-                        topRightSlot.GetTile.Set_Swap(item);
-                        moved = true;
                         continue;
                     }
+
+                    //빈공간일 경우 y값 기준 가장 가까운 Tile찾기
+                    var aboveTiles = orderedSlots
+                        .Where(s => s.GetPoint.Item2 > items.GetPoint.Item2 && s.GetTile != null)
+                        .OrderBy(s => s.GetPoint.Item2)
+                        .FirstOrDefault();
+
+                    //가장 가까운 tile이 없으면 continue;
+                    if (aboveTiles == null)
+                    {
+                        continue;
+                    }
+
+                    //가장 가까운 tile을
+                    var tile = aboveTiles.GetTile;
+
+                    //가장 가까운 tile이 있으면 Set_Swap함수를 이용해 이동시키기
+                    tile.Set_Swap(items);
+
+                    //기존 슬롯은 정보 리셋
+                    aboveTiles.Reset();
+                    checkmove = true;
+                    isMove = true;
+                }
+            }
+
+            //오른쪽 대각선
+            foreach (var item in dic.OrderByDescending(x => x.Key))
+            {
+                var slot = item.Value;
+                //제일 위부터 체크 (Item2가 큰 것부터 정렬)
+                var orderedSlots = slot.OrderByDescending(x => x.GetPoint.Item2).ToList();
+
+                foreach (var items in orderedSlots)
+                {
+                    if (items.GetTile != null)
+                    {
+                        continue;
+                    }
+
+                    //빈공간일 경우 오른쪽 위(0.5f 위) 타일 찾기
+                    var topRightSlot = L_Tile_Slot
+                        .Where(s =>
+                            s.GetPoint.Item1 == items.GetPoint.Item1 + 1f &&
+                            Mathf.Approximately(s.GetPoint.Item2, items.GetPoint.Item2 + 0.5f) &&
+                            s.GetTile != null)
+                        .FirstOrDefault();
+
+                    //가장 가까운 tile이 없으면 continue;
+                    if (topRightSlot == null)
+                    {
+                        continue;
+                    }
+
+                    //가장 가까운 tile을
+                    var tile = topRightSlot.GetTile;
+
+                    //가장 가까운 tile이 있으면 Set_Swap함수를 이용해 이동시키기
+                    tile.Set_Swap(items);
+
+                    //기존 슬롯은 정보 리셋
+                    topRightSlot.Reset();
+
+                    //대각선은 한번이라도 움직이면 다른 것들 다시 체크
+                    checkmove = true;
+                    isMove = true;
+                    break;
+                }
+                if (checkmove)
+                {
+                    break;
+                }
+            }
+
+
+            //왼쪽 대각선
+            foreach (var item in dic.OrderBy(x => x.Key))
+            {
+                var slot = item.Value;
+                //제일 위부터 체크 (Item2가 큰 것부터 정렬)
+                var orderedSlots = slot.OrderByDescending(x => x.GetPoint.Item2).ToList();
+
+                foreach (var items in orderedSlots)
+                {
+                    if (items.GetTile != null)
+                    {
+                        continue;
+                    }
+
+                    //빈공간일 경우 왼쪽 위(0.5f 위) 타일 찾기
+                    var topleftSlot = L_Tile_Slot
+                        .Where(s =>
+                            s.GetPoint.Item1 == items.GetPoint.Item1 - 1f &&
+                            Mathf.Approximately(s.GetPoint.Item2, items.GetPoint.Item2 + 0.5f) &&
+                            s.GetTile != null)
+                        .FirstOrDefault();
+
+                    //가장 가까운 tile이 없으면 continue;
+                    if (topleftSlot == null)
+                    {
+                        continue;
+                    }
+
+                    //가장 가까운 tile을
+                    var tile = topleftSlot.GetTile;
+
+                    //가장 가까운 tile이 있으면 Set_Swap함수를 이용해 이동시키기
+                    tile.Set_Swap(items);
+
+                    //기존 슬롯은 정보 리셋
+                    topleftSlot.Reset();
+
+                    //대각선은 한번이라도 움직이면 다른 것들 다시 체크
+                    checkmove = true;
+                    isMove = true;
+                    break;
+                }
+                if (checkmove)
+                {
+                    break;
                 }
             }
         }
+        return isMove;
     }
 
     /// <summary>

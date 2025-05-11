@@ -47,4 +47,12 @@ public class UI_Tile_Slot : MonoBehaviour
             Ui_Tile = null;
         }
     }
+
+    /// <summary>
+    /// 제거
+    /// </summary>
+    public void Reset()
+    {
+        Ui_Tile = null;
+    }
 }
