@@ -18,7 +18,7 @@ public class TouchManasger : MonoBehaviour
         bool currentInputActive = Input.touchCount > 0 || Input.GetMouseButton(0);
 
         // 입력이 끝났을 때만 초기화
-        if (isInputActive && !currentInputActive)
+        if (isInputActive && !currentInputActive && !PlayManager.instance.GetStay)
         {
             Debug.Log("입력 종료 - 삭제완료");
             TileManager.instance.Reset();
@@ -33,6 +33,11 @@ public class TouchManasger : MonoBehaviour
     /// </summary>
     public void OnTileDown(UI_Tile tile)
     {
+        if (PlayManager.instance.GetStay)
+        {
+            return;
+        }
+
         // 첫 번째 타일 저장
         TileManager.instance.FirstTouch_Tile = tile;
         TileManager.instance.SecondTouch_Tile = null; // 두 번째 타일 초기화
@@ -44,6 +49,11 @@ public class TouchManasger : MonoBehaviour
     /// </summary>
     public void OnTileEnter(UI_Tile tile)
     {
+        if (PlayManager.instance.GetStay)
+        {
+            return;
+        }
+
         var first = TileManager.instance.FirstTouch_Tile;
         // 현재 입력 중인지 확인 (터치 또는 마우스 클릭)
         if (!isInputActive || first == null)

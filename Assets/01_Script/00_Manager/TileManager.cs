@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.IMGUI.Controls;
+using UnityEditor.SearchService;
 using UnityEngine;
 
 public class TileManager : MonoBehaviour
@@ -41,6 +42,8 @@ public class TileManager : MonoBehaviour
 
     [Header("기본 색 타일")]
     [SerializeField] GameObject[] G_Tile;
+
+
 
     private void Awake()
     {
@@ -354,6 +357,8 @@ public class TileManager : MonoBehaviour
             return;
         }
 
+        PlayManager.instance.GetStay = true;
+
         // 각 타일의 슬롯 가져오기
         var firstslot = FirstTouch_Tile.Get_Tile_Slot;
         var secondslot = SecondTouch_Tile.Get_Tile_Slot;
@@ -372,6 +377,9 @@ public class TileManager : MonoBehaviour
     /// <returns></returns>
     IEnumerator IE_Swap()
     {
+        //이동 후 잠깐 딜레이
+        yield return new WaitForSeconds(0.5f);
+
         // 각 타일의 슬롯 가져오기
         var firstslot = FirstTouch_Tile.Get_Tile_Slot;
         var secondslot = SecondTouch_Tile.Get_Tile_Slot;
@@ -379,10 +387,9 @@ public class TileManager : MonoBehaviour
         var first = FirstTouch_Tile;
         var second = SecondTouch_Tile;
 
-        Debug.Log("제거 체크");
         if (!All_Scan_Boom(new UI_Tile[] { first, second }))
         {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.5f);
             Debug.Log("위치 원상복구");
             first.Set_Swap(secondslot);
             second.Set_Swap(firstslot);
@@ -403,20 +410,33 @@ public class TileManager : MonoBehaviour
 
 
     /// <summary>
-    /// 이동 후 제거 반복
+    /// 이동 후 제거, 생성 반복
     /// </summary>
     public IEnumerator IE_Move_And_Boom()
     {
+        var wait = new WaitForSeconds(0.5f);
         while (true)
         {
-            yield return new WaitForSeconds(1f);
+            //이동
+            yield return wait;
             var ismove = All_Scan_Move();
-            if (!ismove)
+
+            yield return wait;
+            //생성
+            var iscraete = PlayManager.instance.Get_UI_Grid().Create_None_Slot_Tile();
+
+            //삭제
+            yield return wait;
+            var isboom = All_Scan_Boom();
+
+            //생성 삭제 이동 아무것도 없다면 종료
+            if (!ismove && !iscraete && !isboom)
             {
                 break;
             }
-            yield return new WaitForSeconds(1f);
-            All_Scan_Boom();
         }
+
+        yield return wait;
+        PlayManager.instance.GetStay = false;
     }
 }

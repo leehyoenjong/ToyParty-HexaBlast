@@ -9,8 +9,16 @@ public class PlayManager : MonoBehaviour
     const string str_Stage = "Stage_Data_{0}";
 
     [SerializeField] UI_Grid Ui_Grid;
+    public UI_Grid Get_UI_Grid() => Ui_Grid;
 
     Dictionary<int, Stage_Data> D_Stage_Data = new Dictionary<int, Stage_Data>();
+
+    bool isStay;
+    public bool GetStay
+    {
+        get => isStay;
+        set => isStay = value;
+    }
 
     void Awake()
     {
@@ -37,6 +45,7 @@ public class PlayManager : MonoBehaviour
 
     IEnumerator IE_Play()
     {
+        isStay = true;
         Ui_Grid.Create_Tile_Slot();
         yield return new WaitForSeconds(1f);
         TileManager.instance.All_Scan_Boom();

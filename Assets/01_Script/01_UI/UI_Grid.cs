@@ -116,4 +116,29 @@ public class UI_Grid : MonoBehaviour
         tile.Initailzed(slot);
         slot.SetTile(tile);
     }
+
+    /// <summary>
+    /// 비어있는 타일에 생성하기 
+    /// </summary>
+    public bool Create_None_Slot_Tile()
+    {
+        var tileslot = TileManager.instance.Get_Tile_Slot;
+        int clreatcount = 0;
+
+        var max = tileslot.Count;
+        for (int i = 0; i < max; i++)
+        {
+            if (tileslot[i].GetTile != null)
+            {
+                continue;
+            }
+
+            //기본 타일 랜덤생성
+            CreateTile(tileslot[i], TileManager.instance.Get_Tile_Basic_Random());
+            clreatcount++;
+        }
+
+        return clreatcount > 0;
+    }
+
 }
