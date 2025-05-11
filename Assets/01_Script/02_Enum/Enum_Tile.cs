@@ -11,4 +11,5 @@ public enum E_Tile_Kind
 {
     Basic,
     Huddle,
+    Special
 }

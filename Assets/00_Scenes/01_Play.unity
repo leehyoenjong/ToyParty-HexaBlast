@@ -605,10 +605,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   G_Tile:
-  - {fileID: 6351598088197818474, guid: 590d9ffc88b8546219f6458a81741f7b, type: 3}
-  - {fileID: 6351598088197818474, guid: 32f872e35e79ac94eabb667456eab80b, type: 3}
   - {fileID: 6351598088197818474, guid: 566e4df6e6c15254fa78f24a00d912aa, type: 3}
+  - {fileID: 6351598088197818474, guid: 590d9ffc88b8546219f6458a81741f7b, type: 3}
   - {fileID: 6351598088197818474, guid: ffd3d5859e57ae448be3f269d0bfecf2, type: 3}
+  - {fileID: 6351598088197818474, guid: 32f872e35e79ac94eabb667456eab80b, type: 3}
 --- !u!4 &1384873846
 Transform:
   m_ObjectHideFlags: 0

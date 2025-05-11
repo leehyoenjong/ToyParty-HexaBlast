@@ -100,7 +100,7 @@ public class UI_Grid : MonoBehaviour
             }
 
             //기본 타일 랜덤생성
-            CreateTile(item, TileManager.instance.Get_Tile_Basic_Random());
+            CreateTile(item, TileManager.instance.Get_Tile_Basic_Random_Start());
         }
     }
 
@@ -140,5 +140,4 @@ public class UI_Grid : MonoBehaviour
 
         return clreatcount > 0;
     }
-
 }

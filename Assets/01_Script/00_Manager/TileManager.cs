@@ -40,10 +40,16 @@ public class TileManager : MonoBehaviour
         (1f, -0.5f), // 대각선 우하단
     };
 
+    Dictionary<E_Tile_Color, int> D_Tile_Color = new Dictionary<E_Tile_Color, int>()
+    {
+        {E_Tile_Color.Red, 0},
+        {E_Tile_Color.Blue, 0},
+        {E_Tile_Color.Yellow, 0},
+        {E_Tile_Color.Green, 0},
+    };
+
     [Header("기본 색 타일")]
     [SerializeField] GameObject[] G_Tile;
-
-
 
     private void Awake()
     {
@@ -339,12 +345,77 @@ public class TileManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 랜덤으로 타일 가져오기 
+    /// 시작할때 타일 생성 시 랜덤으로 가져오 되, 전체 생성 갯수에 맞춰 생성
     /// </summary>
+    public GameObject Get_Tile_Basic_Random_Start()
+    {
+        //다이렉트 생성 타일을 제외한 전체 타일 갯수를 4등분하여
+        //각 E_Tile_Color None을 제외한 나머지가 골고루 생성될 수 있도록 처리
+        var stage_data = PlayManager.instance.Get_Stage_Data();
+        var maxtile = stage_data.St_Tile_Stage.Sum(x => x.Grid_Slot_Count);
+        maxtile -= stage_data.St_Tile_Stage.Sum(x => x.St_Tile_Directs.Count);
+
+        // 각 색상별 목표 타일 수 계산 (총 타일 수 / 4)
+        int targetPerColor = maxtile / 4;
+
+        // 가장 적은 수의 타일을 가진 색상 찾기
+        var minColorCount = D_Tile_Color.OrderBy(x => x.Value).First();
+
+        // 모든 색상이 목표치에 도달했는지 확인
+        bool allFull = D_Tile_Color.All(x => x.Value >= targetPerColor);
+
+        int idx;
+        if (allFull)
+        {
+            // 모든 색상이 목표치에 도달했으면 완전 랜덤
+            idx = UnityEngine.Random.Range(0, G_Tile.Length);
+        }
+        else
+        {
+            // 목표치에 도달하지 않은 색상 중에서 랜덤 선택
+            var availableColors = D_Tile_Color
+                .Where(x => x.Value < targetPerColor)
+                .Select(x => x.Key)
+                .ToList();
+
+            E_Tile_Color selectedColor = availableColors[UnityEngine.Random.Range(0, availableColors.Count)];
+            idx = (int)selectedColor - 1; // 인덱스로 변환 (E_Tile_Color.Red는 1이므로 인덱스는 0)
+
+            // 선택된 색상의 카운트 증가
+            D_Tile_Color[selectedColor]++;
+        }
+
+        return G_Tile[idx];
+    }
+
+    /// <summary>
+    /// 랜덤으로 가져오기
+    /// </summary>
+    /// <returns></returns>
     public GameObject Get_Tile_Basic_Random()
     {
         var idx = UnityEngine.Random.Range(0, G_Tile.Length);
+        var kind = (E_Tile_Color)idx + 1;
+        if (D_Tile_Color.ContainsKey(kind))
+        {
+            D_Tile_Color[kind]++;
+        }
         return G_Tile[idx];
+    }
+
+
+    /// <summary>
+    /// 타일 제거 시 갯수처리
+    /// </summary>
+    /// <param name="tile"></param>
+    public void Destory_Tile_Count(UI_Tile tile)
+    {
+        var kind = tile.Get_Tile_Color();
+        if (!D_Tile_Color.ContainsKey(kind))
+        {
+            return;
+        }
+        D_Tile_Color[kind]--;
     }
 
     /// <summary>
@@ -408,21 +479,22 @@ public class TileManager : MonoBehaviour
         SecondTouch_Tile = null;
     }
 
-
     /// <summary>
     /// 이동 후 제거, 생성 반복
     /// </summary>
     public IEnumerator IE_Move_And_Boom()
     {
-        var wait = new WaitForSeconds(0.5f);
+        var wait = new WaitForSeconds(0.25f);
+
+        //이동, 생성, 삭제
         while (true)
         {
             //이동
             yield return wait;
             var ismove = All_Scan_Move();
 
-            yield return wait;
             //생성
+            yield return wait;
             var iscraete = PlayManager.instance.Get_UI_Grid().Create_None_Slot_Tile();
 
             //삭제
@@ -436,7 +508,125 @@ public class TileManager : MonoBehaviour
             }
         }
 
+        //체크, 섞기
+        while (true)
+        {
+            //파괴 가능한 타일 있는지 체크
+            var check = Check_Destory_Tile();
+
+            //파괴 가능한 타일이 있다면 종료
+            if (check)
+            {
+                break;
+            }
+
+            //파괴 가능한 타일이 없다면 전체 섞기
+            Set_All_Tile_Random();
+            yield return wait;
+        }
+
         yield return wait;
         PlayManager.instance.GetStay = false;
+    }
+
+    /// <summary>
+    /// 파괴 가능 타일 체크
+    /// </summary>
+    bool Check_Destory_Tile()
+    {
+        // 모든 슬롯 위치 확인
+        foreach (var slot in L_Tile_Slot)
+        {
+            if (slot.GetTile == null)
+                continue;
+
+            // 현재 타일 색상
+            var currentColor = slot.GetTile.Get_Tile_Color();
+            var currentPoint = slot.GetPoint;
+
+            // 4방향으로 이동 가능한 위치 확인
+            foreach (var (dx, dy) in i_Directions)
+            {
+                // 양방향 체크
+                for (int dir = -1; dir <= 1; dir += 2)
+                {
+                    float nx = currentPoint.Item1 + dx * dir;
+                    float ny = currentPoint.Item2 + dy * dir;
+
+                    // 이동할 위치의 슬롯 찾기
+                    var targetSlot = L_Tile_Slot.Find(s => s.GetPoint.Item1 == nx && Mathf.Approximately(s.GetPoint.Item2, ny));
+                    if (targetSlot == null || targetSlot.GetTile == null)
+                        continue;
+
+                    // 임시로 타일 교환
+                    var tempTile1 = slot.GetTile;
+                    var tempTile2 = targetSlot.GetTile;
+                    var tempSlot1 = slot;
+                    var tempSlot2 = targetSlot;
+
+                    // 임시 교환
+                    tempTile1.Set_Swap(tempSlot2);
+                    tempTile2.Set_Swap(tempSlot1);
+
+                    // 매치 확인
+                    bool hasMatch = false;
+                    var group1 = ScanLineGroup(tempSlot1);
+                    var group2 = ScanLineGroup(tempSlot2);
+
+                    if (group1.Count >= 3 || group2.Count >= 3)
+                    {
+                        hasMatch = true;
+                    }
+
+                    // 원래 위치로 복구
+                    tempTile1.Set_Swap(tempSlot1);
+                    tempTile2.Set_Swap(tempSlot2);
+
+                    if (hasMatch)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// 타일 전체 섞기
+    /// </summary>
+    void Set_All_Tile_Random()
+    {
+        // 모든 Basic 타일만 찾기
+        List<UI_Tile> basicTiles = new List<UI_Tile>();
+        List<UI_Tile_Slot> basicTileSlots = new List<UI_Tile_Slot>();
+
+        foreach (var tile in L_Tile)
+        {
+            if (tile != null && tile.Get_Tile_Kind() == E_Tile_Kind.Basic)
+            {
+                basicTiles.Add(tile);
+                basicTileSlots.Add(tile.Get_Tile_Slot);
+            }
+        }
+
+        // 슬롯 리스트를 랜덤으로 섞기
+        System.Random random = new System.Random();
+        basicTileSlots = basicTileSlots.OrderBy(x => random.Next()).ToList();
+
+        // 먼저 모든 Basic 타일을 슬롯에서 분리
+        foreach (var tile in basicTiles)
+        {
+            tile.Get_Tile_Slot.Reset();
+        }
+
+        // 랜덤으로 섞인 슬롯에 타일 재배치
+        for (int i = 0; i < basicTiles.Count; i++)
+        {
+            basicTiles[i].Set_Swap(basicTileSlots[i]);
+        }
+
+        Debug.Log($"타일 {basicTiles.Count}개 섞기 완료");
     }
 }

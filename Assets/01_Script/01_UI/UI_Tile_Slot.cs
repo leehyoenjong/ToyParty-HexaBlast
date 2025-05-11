@@ -43,6 +43,7 @@ public class UI_Tile_Slot : MonoBehaviour
     {
         if (Ui_Tile != null)
         {
+            TileManager.instance.Destory_Tile_Count(Ui_Tile);
             GameObject.Destroy(Ui_Tile.gameObject);
             Ui_Tile = null;
         }
