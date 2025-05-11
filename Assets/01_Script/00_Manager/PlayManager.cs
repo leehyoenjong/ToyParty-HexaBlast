@@ -32,15 +32,9 @@ public class PlayManager : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(IE_Play());
+        Ui_Grid.Create_Tile_Slot();
+        TileManager.instance.All_Scan_Boom();
+        StartCoroutine(TileManager.instance.IE_Move_And_Boom());
     }
 
-    IEnumerator IE_Play()
-    {
-        Ui_Grid.Create_Tile_Slot();
-        yield return new WaitForSeconds(1f);
-        TileManager.instance.All_Scan_Boom();
-        yield return new WaitForSeconds(1f);
-        TileManager.instance.All_Scan_Move();
-    }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 
 public class TileManager : MonoBehaviour
@@ -120,7 +121,6 @@ public class TileManager : MonoBehaviour
     /// </summary>
     public bool All_Scan_Boom(UI_Tile[] tiles = null)
     {
-        bool isremove = false;
         HashSet<UI_Tile_Slot> removeSet = new HashSet<UI_Tile_Slot>();
 
         foreach (var item in L_Tile_Slot)
@@ -141,24 +141,38 @@ public class TileManager : MonoBehaviour
         }
 
         // 삭제
+        bool isremove = false;
         foreach (var slot in removeSet)
         {
             slot.RemoveTile();
-            if (tiles == null)
+            isremove = Check_TargetSlot(tiles, slot, isremove);
+        }
+        return isremove;
+    }
+
+    /// <summary>
+    /// 지정한 타일이 삭제목록에 있는지 체크
+    /// </summary>
+    bool Check_TargetSlot(UI_Tile[] tiles, UI_Tile_Slot slot, bool istargets)
+    {
+        if (tiles == null || tiles.Length == 0)
+        {
+            return istargets;
+        }
+
+        foreach (var tile in tiles)
+        {
+            if (tile == null)
             {
                 continue;
             }
 
-            //타일처리
-            foreach (var tile in tiles)
+            if (tile.Get_Tile_Slot == slot)
             {
-                if (tile.Get_Tile_Slot == slot)
-                {
-                    isremove = true;
-                }
+                istargets = true;
             }
         }
-        return isremove;
+        return istargets;
     }
 
 
@@ -374,10 +388,7 @@ public class TileManager : MonoBehaviour
             second.Set_Swap(firstslot);
         }
         Reset();
-
-        //빈자리 채우기
-        yield return new WaitForSeconds(1f);
-        All_Scan_Move();
+        StartCoroutine(IE_Move_And_Boom());
     }
 
     /// <summary>
@@ -388,5 +399,24 @@ public class TileManager : MonoBehaviour
         Debug.Log("리셋처리");
         FirstTouch_Tile = null;
         SecondTouch_Tile = null;
+    }
+
+
+    /// <summary>
+    /// 이동 후 제거 반복
+    /// </summary>
+    public IEnumerator IE_Move_And_Boom()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(1f);
+            var ismove = All_Scan_Move();
+            if (!ismove)
+            {
+                break;
+            }
+            yield return new WaitForSeconds(1f);
+            All_Scan_Boom();
+        }
     }
 }
