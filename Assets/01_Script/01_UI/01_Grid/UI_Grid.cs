@@ -9,8 +9,6 @@ public class UI_Grid : MonoBehaviour
 
     [Header("프리팹")]
     [SerializeField] GameObject G_Tile_Slot;
-    [SerializeField] GameObject G_Tile;
-
 
     /// <summary>
     /// 타일 슬롯 생성
@@ -63,7 +61,7 @@ public class UI_Grid : MonoBehaviour
                 if (directtile.Count > 0)
                 {
                     //번호 맞는지 체크
-                    var idx = directtile.FindIndex(x => x.Point == j);
+                    var idx = directtile.FindIndex(x => x.Index == j);
                     if (idx == -1)
                     {
                         continue;

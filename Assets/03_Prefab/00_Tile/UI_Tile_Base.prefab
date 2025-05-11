@@ -11,10 +11,10 @@ GameObject:
   - component: {fileID: 7419362804538284231}
   - component: {fileID: 4274023869493979784}
   - component: {fileID: 6261449209345187546}
-  - component: {fileID: 8610180264752958667}
-  - component: {fileID: 6008019838302469211}
+  - component: {fileID: 5284461338050394559}
+  - component: {fileID: 4728937267161870327}
   m_Layer: 5
-  m_Name: UI_Tile_Slot
+  m_Name: UI_Tile_Base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -60,14 +60,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6037736, g: 0.6037736, b: 0.6037736, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: e4a9742dc0d27a840835d1212b8591a4, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -77,7 +77,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8610180264752958667
+--- !u!114 &5284461338050394559
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -86,11 +86,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 6351598088197818474}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51f1a2d83551346cfb020066f9bc870e, type: 3}
+  m_Script: {fileID: 11500000, guid: 7437291e0f56c41f7a727cd837f7f248, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Rt_Slot: {fileID: 7419362804538284231}
---- !u!114 &6008019838302469211
+  En_Tile_Color: 0
+  En_Tile_Kind: 0
+  Rt_Rect: {fileID: 7419362804538284231}
+  Et_EventTrigger: {fileID: 4728937267161870327}
+--- !u!114 &4728937267161870327
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -99,9 +102,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 6351598088197818474}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
-  m_EffectDistance: {x: 2, y: -2}
-  m_UseGraphicAlpha: 1
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls: []

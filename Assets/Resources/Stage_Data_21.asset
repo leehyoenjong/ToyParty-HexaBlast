@@ -17,14 +17,34 @@ MonoBehaviour:
   - Grid_Slot_Count: 3
     St_Tile_Directs: []
   - Grid_Slot_Count: 4
-    St_Tile_Directs: []
+    St_Tile_Directs:
+    - G_Tile: {fileID: 2547636397197806231, guid: d69dd7125eab6714797749869119b75c, type: 3}
+      Index: 0
+    - G_Tile: {fileID: 2547636397197806231, guid: d69dd7125eab6714797749869119b75c, type: 3}
+      Index: 3
   - Grid_Slot_Count: 5
-    St_Tile_Directs: []
+    St_Tile_Directs:
+    - G_Tile: {fileID: 2547636397197806231, guid: d69dd7125eab6714797749869119b75c, type: 3}
+      Index: 0
+    - G_Tile: {fileID: 2547636397197806231, guid: d69dd7125eab6714797749869119b75c, type: 3}
+      Index: 4
   - Grid_Slot_Count: 6
-    St_Tile_Directs: []
+    St_Tile_Directs:
+    - G_Tile: {fileID: 2547636397197806231, guid: d69dd7125eab6714797749869119b75c, type: 3}
+      Index: 3
+    - G_Tile: {fileID: 2547636397197806231, guid: d69dd7125eab6714797749869119b75c, type: 3}
+      Index: 5
   - Grid_Slot_Count: 5
-    St_Tile_Directs: []
+    St_Tile_Directs:
+    - G_Tile: {fileID: 2547636397197806231, guid: d69dd7125eab6714797749869119b75c, type: 3}
+      Index: 0
+    - G_Tile: {fileID: 2547636397197806231, guid: d69dd7125eab6714797749869119b75c, type: 3}
+      Index: 4
   - Grid_Slot_Count: 4
-    St_Tile_Directs: []
+    St_Tile_Directs:
+    - G_Tile: {fileID: 2547636397197806231, guid: d69dd7125eab6714797749869119b75c, type: 3}
+      Index: 0
+    - G_Tile: {fileID: 2547636397197806231, guid: d69dd7125eab6714797749869119b75c, type: 3}
+      Index: 3
   - Grid_Slot_Count: 3
     St_Tile_Directs: []

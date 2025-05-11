@@ -39,6 +39,7 @@ public class TileManager : MonoBehaviour
         (1f, 0.5f),  // 대각선 우상단
         (1f, -0.5f), // 대각선 우하단
     };
+    public (float dx, float dy)[] Get_Directions => i_Directions;
 
     Dictionary<E_Tile_Color, int> D_Tile_Color = new Dictionary<E_Tile_Color, int>()
     {
@@ -59,10 +60,16 @@ public class TileManager : MonoBehaviour
     /// <summary>
     /// 한 슬롯을 기준으로 8방향(직선)으로 연속된 같은 색 타일 그룹을 반환
     /// </summary>
-    public HashSet<UI_Tile_Slot> ScanLineGroup(UI_Tile_Slot start)
+    public HashSet<UI_Tile_Slot> Set_ScanLineGroup(UI_Tile_Slot start)
     {
         HashSet<UI_Tile_Slot> result = new HashSet<UI_Tile_Slot>();
         if (start == null || start.GetTile == null)
+        {
+            return result;
+        }
+
+        // Basic 타입의 타일만 체크
+        if (start.GetTile.Get_Tile_Kind() != E_Tile_Kind.Basic)
         {
             return result;
         }
@@ -85,7 +92,8 @@ public class TileManager : MonoBehaviour
                 {
                     break;
                 }
-                if (neighbor.GetTile.Get_Tile_Color() != color)
+                // Basic 타입과 같은 색상의 타일만 체크
+                if (neighbor.GetTile.Get_Tile_Kind() != E_Tile_Kind.Basic || neighbor.GetTile.Get_Tile_Color() != color)
                 {
                     break;
                 }
@@ -104,7 +112,8 @@ public class TileManager : MonoBehaviour
                 {
                     break;
                 }
-                if (neighbor.GetTile.Get_Tile_Color() != color)
+                // Basic 타입과 같은 색상의 타일만 체크
+                if (neighbor.GetTile.Get_Tile_Kind() != E_Tile_Kind.Basic || neighbor.GetTile.Get_Tile_Color() != color)
                 {
                     break;
                 }
@@ -113,7 +122,7 @@ public class TileManager : MonoBehaviour
                 ny -= dy;
             }
 
-            // 3개 이상 연속이면 결과에 추가
+            // 3개 이상 연속이면 결과에 추가 - 이 방향에서 매치가 발견됨
             if (line.Count >= 3)
             {
                 foreach (var slot in line)
@@ -121,7 +130,11 @@ public class TileManager : MonoBehaviour
                     result.Add(slot);
                 }
             }
+            // 3개 미만이면 이 방향에서는 매치가 없음 - 건너뜀
         }
+
+        // 아무 방향에서도 매치가 없으면 빈 결과 반환
+        // 매치가 있는 방향에서만 해당 슬롯들이 결과에 추가됨
         return result;
     }
 
@@ -130,33 +143,84 @@ public class TileManager : MonoBehaviour
     /// </summary>
     public bool All_Scan_Boom(UI_Tile[] tiles = null)
     {
-        HashSet<UI_Tile_Slot> removeSet = new HashSet<UI_Tile_Slot>();
+        HashSet<UI_Tile_Slot> hs_remove_tile = new HashSet<UI_Tile_Slot>();
+        HashSet<UI_Tile_Slot> hs_match_tile = new HashSet<UI_Tile_Slot>();
 
         foreach (var item in L_Tile_Slot)
         {
-            if (item.GetTile == null)
+            // 이미 처리된 슬롯이거나 타일이 없는 슬롯은 건너뜀
+            if (item.GetTile == null || hs_match_tile.Contains(item))
             {
                 continue;
             }
 
-            var group = ScanLineGroup(item);
+            var group = Set_ScanLineGroup(item);
             if (group.Count >= 3)
             {
                 foreach (var slot in group)
                 {
-                    removeSet.Add(slot);
+                    hs_remove_tile.Add(slot);
+                    hs_match_tile.Add(slot); // 이미 매치된 슬롯으로 표시
                 }
+
+                //파괴되는 slot 타일 근처에 E_Tile_Kind.Huddle 타입의 타일이 있을 경우 Set_Crush함수 호출
+                //단, 매칭되는 group 하나당 한번만 호출임
+                Set_Huddle_Tile_Active(group);
             }
+        }
+
+        // 디버깅 - 삭제될 타일 개수
+        if (hs_remove_tile.Count > 0)
+        {
+            Debug.Log($"삭제될 타일 개수: {hs_remove_tile.Count}");
         }
 
         // 삭제
         bool isremove = false;
-        foreach (var slot in removeSet)
+        foreach (var slot in hs_remove_tile)
         {
             slot.RemoveTile();
             isremove = Check_TargetSlot(tiles, slot, isremove);
         }
         return isremove;
+    }
+
+    /// <summary>
+    /// 파괴되는 타일 그룹 주변의 Huddle 타입 타일 확인 및 처리
+    /// </summary>
+    private void Set_Huddle_Tile_Active(HashSet<UI_Tile_Slot> destroyGroup)
+    {
+        // 매칭 그룹 당 한번만 호출
+        // 처리할 Huddle 타일 찾기 - LINQ 활용
+        var huddletile = L_Tile_Slot
+            .Where(slot => slot.GetTile != null && slot.GetTile.Get_Tile_Kind() == E_Tile_Kind.Huddle)
+            .Select(slot => slot.GetTile as UI_Tile_Paengi)
+            .Where(huddleTile => huddleTile != null)
+            .ToList();
+
+        // 이미 처리된 Huddle 타일을 추적하기 위한 집합
+        HashSet<UI_Tile_Paengi> hs_paengi = new HashSet<UI_Tile_Paengi>();
+
+        // 파괴될 타일 그룹에서 하나를 대표로 선택 (그룹 당 한 번만 처리하기 위해)
+        foreach (var huddle in huddletile)
+        {
+            if (hs_paengi.Contains(huddle))
+                continue;
+
+            // 이 Huddle 타일이 파괴 대상 그룹 중 하나라도 인접해 있는지 확인
+            var removetile = destroyGroup
+                .Select(slot => slot.GetTile)
+                .Where(tile => tile != null)
+                .FirstOrDefault(tile => huddle.Check_Cursh(tile));
+
+            if (removetile != null)
+            {
+                // Set_Crush 함수 호출 (파괴되는 타일 전달)
+                huddle.Set_Crush(removetile);
+                // 처리된 타일로 표시
+                hs_paengi.Add(huddle);
+            }
+        }
     }
 
     /// <summary>
@@ -570,8 +634,8 @@ public class TileManager : MonoBehaviour
 
                     // 매치 확인
                     bool hasMatch = false;
-                    var group1 = ScanLineGroup(tempSlot1);
-                    var group2 = ScanLineGroup(tempSlot2);
+                    var group1 = Set_ScanLineGroup(tempSlot1);
+                    var group2 = Set_ScanLineGroup(tempSlot2);
 
                     if (group1.Count >= 3 || group2.Count >= 3)
                     {

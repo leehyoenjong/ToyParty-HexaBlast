@@ -23,6 +23,6 @@ public class Stage_Data : ScriptableObject
     public struct ST_Tile_Direct
     {
         public GameObject G_Tile;
-        public int Point;
+        public int Index;
     }
 }

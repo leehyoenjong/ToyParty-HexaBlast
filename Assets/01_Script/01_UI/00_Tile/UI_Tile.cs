@@ -77,4 +77,13 @@ public class UI_Tile : MonoBehaviour
         // 드래그 중 타일 선택 (두 번째 타일)
         TouchManasger.instance.OnTileEnter(this);
     }
+
+    /// <summary>
+    /// 타일제거
+    /// </summary>
+    public virtual void RemoveTile()
+    {
+        TileManager.instance.Destory_Tile_Count(this);
+        Destroy(this.gameObject);
+    }
 }
