@@ -18,7 +18,7 @@ public class ClearManager : MonoBehaviour
         instance = this;
     }
 
-    public void Initiailzed()
+    public void Initaiilzed()
     {
         var stage_data = PlayManager.instance.Get_Stage_Data();
         Cur_Move_Count = stage_data.iMoveCount;

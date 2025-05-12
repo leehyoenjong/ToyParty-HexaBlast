@@ -52,3 +52,5 @@ MonoBehaviour:
   iClear_Count: 10
   Clear_Kind: 1
   iMoveCount: 18
+  iMaxScore: 40000
+  iMedalScore: 88130000204e0000409c0000

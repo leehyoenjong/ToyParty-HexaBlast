@@ -18,6 +18,10 @@ public class Stage_Data : ScriptableObject
     [Header("이동 횟수")]
     public int iMoveCount;
 
+    [Header("최고점수")]
+    public int iMaxScore;
+    public int[] iMedalScore = new int[3];
+
     //ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
     [Serializable]
     public struct ST_Tile_Stage

@@ -170,6 +170,7 @@ public class TileManager : MonoBehaviour
         }
         // 삭제
         bool isremove = false;
+        ScoreManager.instance.Update_Score(hs_remove_tile.Count);
         foreach (var slot in hs_remove_tile)
         {
             slot.RemoveTile();

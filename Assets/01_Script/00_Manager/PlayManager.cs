@@ -44,7 +44,8 @@ public class PlayManager : MonoBehaviour
     private void Start()
     {
         StartCoroutine(IE_Play());
-        ClearManager.instance.Initiailzed();
+        ClearManager.instance.Initaiilzed();
+        ScoreManager.instance.Initailized();
     }
 
     IEnumerator IE_Play()
