@@ -127,12 +127,11 @@ public class TileManager : MonoBehaviour
                 {
                     result.Add(slot);
                 }
+                //하나의 그룹만 넘기기
+                return result;
             }
-            // 3개 미만이면 이 방향에서는 매치가 없음 - 건너뜀
         }
 
-        // 아무 방향에서도 매치가 없으면 빈 결과 반환
-        // 매치가 있는 방향에서만 해당 슬롯들이 결과에 추가됨
         return result;
     }
 
