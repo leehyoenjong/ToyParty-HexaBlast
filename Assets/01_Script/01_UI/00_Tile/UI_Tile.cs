@@ -25,13 +25,13 @@ public class UI_Tile : MonoBehaviour
     public UI_Tile_Slot Get_Tile_Slot => Ui_Tile_Slot;
 
     // 애니메이션 관련 변수
-    private bool b_Is_Moving = false;
-    private Tween Tw_Move;
+    bool b_Is_Moving = false;
+    Tween Tw_Move;
 
     // 애니메이션 중 임시 저장 변수
-    private Transform Tr_Original_Parent;
-    private Vector3 Vc_Original_LocalPosition;
-    private Vector3 Vc_Target_World_Position;
+    Transform Tr_Original_Parent;
+    Vector3 Vc_Original_LocalPosition;
+    Vector3 Vc_Target_World_Position;
 
     public void Initailzed(UI_Tile_Slot slot)
     {
@@ -95,9 +95,6 @@ public class UI_Tile : MonoBehaviour
         Tr_Original_Parent = Rt_Rect.parent;
         Vc_Original_LocalPosition = Rt_Rect.localPosition;
 
-        // 최상위 UI 캔버스 찾기
-        Transform rootCanvas = FindRootCanvas();
-
         // 이동 시간 계산
         // 대각선 이동일 경우 더 빠르게 처리
         float duration = isDiagonal
@@ -108,7 +105,7 @@ public class UI_Tile : MonoBehaviour
         b_Is_Moving = true;
 
         // 타일을 최상위 캔버스의 자식으로 이동 (가시성 확보)
-        Rt_Rect.SetParent(rootCanvas, true); // 월드 위치 유지
+        Rt_Rect.SetParent(PlayManager.instance.GetUI_Play().GetCanvas().transform, true); // 월드 위치 유지
         Rt_Rect.SetAsLastSibling(); // 가장 위에 표시
 
         // 대각선 이동을 위한 이징 설정
@@ -142,27 +139,6 @@ public class UI_Tile : MonoBehaviour
             });
     }
 
-    /// <summary>
-    /// 최상위 캔버스 찾기
-    /// </summary>
-    private Transform FindRootCanvas()
-    {
-        // 현재 캔버스 찾기
-        Canvas currentCanvas = GetComponentInParent<Canvas>();
-        if (currentCanvas != null && currentCanvas.isRootCanvas)
-        {
-            return currentCanvas.transform;
-        }
-
-        // 상위 캔버스가 없으면 현재 부모의 최상위 찾기
-        Transform parent = Rt_Rect.parent;
-        while (parent.parent != null)
-        {
-            parent = parent.parent;
-        }
-
-        return parent;
-    }
 
     /// <summary>
     /// 타일이 이동 중인지 여부 확인
@@ -182,7 +158,7 @@ public class UI_Tile : MonoBehaviour
         return b_Is_Moving;
     }
 
-    private void SetupEventTrigger()
+    void SetupEventTrigger()
     {
         // 이벤트 트리거 엔트리 목록 초기화
         if (Et_EventTrigger.triggers == null)
@@ -207,7 +183,7 @@ public class UI_Tile : MonoBehaviour
         Et_EventTrigger.triggers.Add(entryPointerEnter);
     }
 
-    private void OnPointerDownDelegate(PointerEventData data)
+    void OnPointerDownDelegate(PointerEventData data)
     {
         // 이동 중에는 터치를 무시
         if (Check_Is_Moving())
@@ -220,7 +196,7 @@ public class UI_Tile : MonoBehaviour
         TouchManasger.instance.OnTileDown(this);
     }
 
-    private void OnPointerEnterDelegate(PointerEventData data)
+    void OnPointerEnterDelegate(PointerEventData data)
     {
         // 이동 중에는 터치를 무시
         if (Check_Is_Moving())
@@ -249,7 +225,7 @@ public class UI_Tile : MonoBehaviour
         Destroy(this.gameObject);
     }
 
-    private void OnDestroy()
+    void OnDestroy()
     {
         // 게임 오브젝트가 제거될 때 모든 트윈 중지
         if (Tw_Move != null && Tw_Move.IsActive())

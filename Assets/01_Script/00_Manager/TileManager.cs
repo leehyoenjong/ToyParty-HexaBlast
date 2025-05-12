@@ -181,7 +181,7 @@ public class TileManager : MonoBehaviour
     /// <summary>
     /// 파괴되는 타일 그룹 주변의 Huddle 타입 타일 확인 및 처리
     /// </summary>
-    private void Set_Huddle_Tile_Active(HashSet<UI_Tile_Slot> destroyGroup)
+    void Set_Huddle_Tile_Active(HashSet<UI_Tile_Slot> destroyGroup)
     {
         // 매칭 그룹 당 한번만 호출
         // 처리할 Huddle 타일 찾기 - LINQ 활용
@@ -247,25 +247,24 @@ public class TileManager : MonoBehaviour
     /// </summary>
     public bool All_Scan_Move()
     {
-        // 이 함수는 이제 StartCoroutine(ProcessSequentialMoves()) 호출과 함께 사용해야 함
         bool anyMovement = false;
 
         // 1. 모든 수직 이동 처리
-        bool verticalMoved = ExecuteAllVerticalMoves();
+        bool verticalMoved = Set_Move_All_Down();
         if (verticalMoved)
         {
             anyMovement = true;
         }
 
         // 2. 모든 오른쪽 대각선 이동 처리
-        bool diagonalRightMoved = ExecuteAllDiagonalRightMoves();
+        bool diagonalRightMoved = Set_All_Right_Moves();
         if (diagonalRightMoved)
         {
             anyMovement = true;
         }
 
         // 3. 모든 왼쪽 대각선 이동 처리
-        bool diagonalLeftMoved = ExecuteAllDiagonalLeftMoves();
+        bool diagonalLeftMoved = Set_All_Left_Moves();
         if (diagonalLeftMoved)
         {
             anyMovement = true;
@@ -275,49 +274,9 @@ public class TileManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 순차적인 타일 이동 처리 코루틴
-    /// </summary>
-    private IEnumerator ProcessSequentialMoves()
-    {
-        bool continueMoving = true;
-
-        while (continueMoving)
-        {
-            continueMoving = false;
-
-            // 1. 수직 이동 먼저 처리
-            bool verticalMoved = ExecuteAllVerticalMoves();
-            if (verticalMoved)
-            {
-                continueMoving = true;
-                yield return StartCoroutine(IE_Wait_For_Tile_Animations());
-                continue;
-            }
-
-            // 2. 모든 오른쪽 대각선 이동을 한 번에 처리
-            bool diagonalRightMoved = ExecuteAllDiagonalRightMoves();
-            if (diagonalRightMoved)
-            {
-                continueMoving = true;
-                yield return StartCoroutine(IE_Wait_For_Tile_Animations());
-                continue;
-            }
-
-            // 3. 모든 왼쪽 대각선 이동을 한 번에 처리
-            bool diagonalLeftMoved = ExecuteAllDiagonalLeftMoves();
-            if (diagonalLeftMoved)
-            {
-                continueMoving = true;
-                yield return StartCoroutine(IE_Wait_For_Tile_Animations());
-                continue;
-            }
-        }
-    }
-
-    /// <summary>
     /// 수직 방향(위에서 아래로) 타일 이동
     /// </summary>
-    private bool MoveDownVertical(Dictionary<float, List<UI_Tile_Slot>> columnDict)
+    bool Set_Move_Down(Dictionary<float, List<UI_Tile_Slot>> columnDict)
     {
         bool hasMoved = false;
 
@@ -359,7 +318,7 @@ public class TileManager : MonoBehaviour
     /// <summary>
     /// 모든 타일의 애니메이션이 완료될 때까지 기다림
     /// </summary>
-    private IEnumerator IE_Wait_For_Tile_Animations()
+    IEnumerator IE_Wait_For_Tile_Animations()
     {
         // 시작하기 전에 짧은 대기 (애니메이션이 시작될 시간 확보)
         yield return new WaitForSeconds(0.02f);
@@ -367,7 +326,7 @@ public class TileManager : MonoBehaviour
         // 최대 대기 시간 설정 (무한 대기 방지)
         float maxWaitTime = 0.5f; // 다시 0.5초로 충분한 대기 시간 제공
         float elapsedTime = 0f;
-        
+
         // 추가 안전 대기 횟수 - 모든 타일이 멈춘 것으로 확인되었지만, 추가로 대기하는 프레임 수
         int safetyFrames = 3;
         int currentSafetyFrame = 0;
@@ -391,7 +350,7 @@ public class TileManager : MonoBehaviour
             if (!anyMoving)
             {
                 currentSafetyFrame++;
-                
+
                 // 안전 프레임 카운트가 목표에 도달하면 종료
                 if (currentSafetyFrame >= safetyFrames)
                 {
@@ -572,7 +531,7 @@ public class TileManager : MonoBehaviour
             bool anyMovement = false;
 
             // 1. 모든 가능한 수직 이동 처리
-            bool verticalMoved = ExecuteAllVerticalMoves();
+            bool verticalMoved = Set_Move_All_Down();
             if (verticalMoved)
             {
                 anyMovement = true;
@@ -581,7 +540,7 @@ public class TileManager : MonoBehaviour
             }
 
             // 2. 모든 오른쪽 대각선 이동을 한 번에 처리
-            bool diagonalRightMoved = ExecuteAllDiagonalRightMoves();
+            bool diagonalRightMoved = Set_All_Right_Moves();
             if (diagonalRightMoved)
             {
                 anyMovement = true;
@@ -590,7 +549,7 @@ public class TileManager : MonoBehaviour
             }
 
             // 3. 모든 왼쪽 대각선 이동을 한 번에 처리
-            bool diagonalLeftMoved = ExecuteAllDiagonalLeftMoves();
+            bool diagonalLeftMoved = Set_All_Left_Moves();
             if (diagonalLeftMoved)
             {
                 anyMovement = true;
@@ -600,31 +559,34 @@ public class TileManager : MonoBehaviour
 
             // 모든 이동 종류 재시도 - 대각선 이동 후 수직 이동이 가능할 수 있음
             bool additionalMoves = false;
-            do {
+            do
+            {
                 additionalMoves = false;
-                
+
                 // 다시 수직 이동 확인
-                verticalMoved = ExecuteAllVerticalMoves();
+                verticalMoved = Set_Move_All_Down();
                 if (verticalMoved)
                 {
                     anyMovement = true;
                     additionalMoves = true;
                     yield return StartCoroutine(IE_Wait_For_Tile_Animations());
                 }
-                
+
                 // 다시 오른쪽 대각선 이동 확인
-                if (!verticalMoved) {
-                    diagonalRightMoved = ExecuteAllDiagonalRightMoves();
+                if (!verticalMoved)
+                {
+                    diagonalRightMoved = Set_All_Right_Moves();
                     if (diagonalRightMoved)
                     {
                         anyMovement = true;
                         additionalMoves = true;
                         yield return StartCoroutine(IE_Wait_For_Tile_Animations());
                     }
-                    
+
                     // 다시 왼쪽 대각선 이동 확인
-                    if (!diagonalRightMoved) {
-                        diagonalLeftMoved = ExecuteAllDiagonalLeftMoves();
+                    if (!diagonalRightMoved)
+                    {
+                        diagonalLeftMoved = Set_All_Left_Moves();
                         if (diagonalLeftMoved)
                         {
                             anyMovement = true;
@@ -639,7 +601,7 @@ public class TileManager : MonoBehaviour
 
             // 모든 이동이 확실히 완료된 후에 생성 단계 진행
             yield return new WaitForSeconds(0.05f);
-            
+
             //생성
             var iscraete = PlayManager.instance.Get_UI_Grid().Create_None_Slot_Tile();
 
@@ -685,14 +647,14 @@ public class TileManager : MonoBehaviour
     /// <summary>
     /// 모든 수직 이동 실행
     /// </summary>
-    private bool ExecuteAllVerticalMoves()
+    bool Set_Move_All_Down()
     {
         // 타일 슬롯을 x좌표(Item1)별로 그룹화하여 딕셔너리 생성
         var columnDict = L_Tile_Slot
                     .GroupBy(slot => slot.GetPoint.Item1)
                     .ToDictionary(group => group.Key, group => group.Select(slot => slot).ToList());
 
-        return MoveDownVertical(columnDict);
+        return Set_Move_Down(columnDict);
     }
 
     /// <summary>
@@ -800,18 +762,18 @@ public class TileManager : MonoBehaviour
     /// <summary>
     /// 오른쪽 대각선 방향 타일 이동 - 모든 가능한 타일을 한 번에 처리
     /// </summary>
-    private bool ExecuteAllDiagonalRightMoves()
+    bool Set_All_Right_Moves()
     {
         bool anyMoved = false;
-        
+
         // 타일 슬롯을 x좌표(Item1)별로 그룹화하여 딕셔너리 생성
         var columnDict = L_Tile_Slot
                     .GroupBy(slot => slot.GetPoint.Item1)
                     .ToDictionary(group => group.Key, group => group.Select(slot => slot).ToList());
-                    
+
         // 이동 가능한 모든 타일과 목표 슬롯을 미리 계산
         List<(UI_Tile tile, UI_Tile_Slot targetSlot, UI_Tile_Slot sourceSlot)> movesMap = new List<(UI_Tile, UI_Tile_Slot, UI_Tile_Slot)>();
-        
+
         // 오른쪽에서 왼쪽으로 열 정렬 (x좌표 기준)
         foreach (var column in columnDict.OrderByDescending(x => x.Key))
         {
@@ -834,15 +796,15 @@ public class TileManager : MonoBehaviour
 
                 if (topRightSlot == null)
                     continue;
-                    
+
                 // 이동할 타일과 슬롯을 이동 맵에 추가 - 이미 다른 이동에 포함된 타일인지 확인
                 if (movesMap.Any(m => m.tile == topRightSlot.GetTile || m.targetSlot == emptySlot))
                     continue;
-                    
+
                 movesMap.Add((topRightSlot.GetTile, emptySlot, topRightSlot));
             }
         }
-        
+
         // 모든 이동을 한 번에 실행
         foreach (var move in movesMap)
         {
@@ -858,18 +820,18 @@ public class TileManager : MonoBehaviour
     /// <summary>
     /// 왼쪽 대각선 방향 타일 이동 - 모든 가능한 타일을 한 번에 처리
     /// </summary>
-    private bool ExecuteAllDiagonalLeftMoves()
+    bool Set_All_Left_Moves()
     {
         bool anyMoved = false;
-        
+
         // 타일 슬롯을 x좌표(Item1)별로 그룹화하여 딕셔너리 생성
         var columnDict = L_Tile_Slot
                     .GroupBy(slot => slot.GetPoint.Item1)
                     .ToDictionary(group => group.Key, group => group.Select(slot => slot).ToList());
-                    
+
         // 이동 가능한 모든 타일과 목표 슬롯을 미리 계산
         List<(UI_Tile tile, UI_Tile_Slot targetSlot, UI_Tile_Slot sourceSlot)> movesMap = new List<(UI_Tile, UI_Tile_Slot, UI_Tile_Slot)>();
-        
+
         // 왼쪽에서 오른쪽으로 열 정렬 (x좌표 기준)
         foreach (var column in columnDict.OrderBy(x => x.Key))
         {
@@ -892,15 +854,15 @@ public class TileManager : MonoBehaviour
 
                 if (topLeftSlot == null)
                     continue;
-                    
+
                 // 이동할 타일과 슬롯을 이동 맵에 추가 - 이미 다른 이동에 포함된 타일인지 확인
                 if (movesMap.Any(m => m.tile == topLeftSlot.GetTile || m.targetSlot == emptySlot))
                     continue;
-                    
+
                 movesMap.Add((topLeftSlot.GetTile, emptySlot, topLeftSlot));
             }
         }
-        
+
         // 모든 이동을 한 번에 실행
         foreach (var move in movesMap)
         {

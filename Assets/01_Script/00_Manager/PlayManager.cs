@@ -11,6 +11,9 @@ public class PlayManager : MonoBehaviour
     [SerializeField] UI_Grid Ui_Grid;
     public UI_Grid Get_UI_Grid() => Ui_Grid;
 
+    [SerializeField] UI_Play Ui_Play;
+    public UI_Play GetUI_Play() => Ui_Play;
+
     bool isStay;
     public bool GetStay
     {
