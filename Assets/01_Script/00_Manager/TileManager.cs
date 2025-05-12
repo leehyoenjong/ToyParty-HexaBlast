@@ -410,7 +410,7 @@ public class TileManager : MonoBehaviour
     {
         //다이렉트 생성 타일을 제외한 전체 타일 갯수를 4등분하여
         //각 E_Tile_Color None을 제외한 나머지가 골고루 생성될 수 있도록 처리
-        var stage_data = PlayManager.instance.Get_Stage_Data();
+        var stage_data = StageManager.Get_Stage_Data();
         var maxtile = stage_data.St_Tile_Stage.Sum(x => x.Grid_Slot_Count);
         maxtile -= stage_data.St_Tile_Stage.Sum(x => x.St_Tile_Directs.Count);
 

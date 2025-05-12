@@ -20,7 +20,7 @@ public class UI_Grid : MonoBehaviour
         var width = rt.rect.width;
         var height = rt.rect.width;
 
-        var stagedata = PlayManager.instance.Get_Stage_Data();
+        var stagedata = StageManager.Get_Stage_Data();
 
         //최대 갯수 
         var max = stagedata.St_Tile_Stage.Length;

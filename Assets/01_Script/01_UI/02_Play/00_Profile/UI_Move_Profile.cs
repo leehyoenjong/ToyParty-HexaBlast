@@ -7,7 +7,7 @@ public class UI_Move_Profile : MonoBehaviour
 
     public void Initailized()
     {
-        T_Count.text = PlayManager.instance.Get_Stage_Data().iMoveCount.ToString();
+        T_Count.text = StageManager.Get_Stage_Data().iMoveCount.ToString();
     }
 
     public void Update_Move_Count(int count)

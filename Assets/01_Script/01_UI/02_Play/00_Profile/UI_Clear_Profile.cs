@@ -12,7 +12,7 @@ public class UI_Clear_Profile : MonoBehaviour
     /// </summary>
     public void Initailzed()
     {
-        var stagedata = PlayManager.instance.Get_Stage_Data();
+        var stagedata = StageManager.Get_Stage_Data();;
         T_Clear_Count.text = stagedata.iClear_Count.ToString();
         Img_Clear_ICON.sprite = stagedata.Sp_Clear_ICON;
     }

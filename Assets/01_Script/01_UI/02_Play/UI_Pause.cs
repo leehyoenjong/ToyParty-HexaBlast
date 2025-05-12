@@ -10,7 +10,7 @@ public class UI_Pause : MonoBehaviour
 
     private void Start()
     {
-        T_Level.text = string.Format("LEVEL {0}", PlayManager.instance.Get_Stage_Data().StageNum);
+        T_Level.text = string.Format("LEVEL {0}", StageManager.Get_Stage_Data().StageNum);
         Time.timeScale = 0;
     }
 

@@ -23,7 +23,7 @@ public class UI_Score_Profile : MonoBehaviour
 
     public void Initailized()
     {
-        var stagedata = PlayManager.instance.Get_Stage_Data();
+        var stagedata = StageManager.Get_Stage_Data();;
         //메달 위치 셋팅
         var max = stagedata.iMaxScore;
         var medal = stagedata.iMedalScore;
@@ -91,7 +91,7 @@ public class UI_Score_Profile : MonoBehaviour
         T_Score.text = score.ToString();
 
         //게이지
-        var stagedata = PlayManager.instance.Get_Stage_Data();
+        var stagedata = StageManager.Get_Stage_Data();;
         Img_Gage.fillAmount = (float)score / (float)stagedata.iMaxScore;
 
         //점수에 따른 메달 색 설정

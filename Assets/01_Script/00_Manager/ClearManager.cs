@@ -20,7 +20,7 @@ public class ClearManager : MonoBehaviour
 
     public void Initaiilzed()
     {
-        var stage_data = PlayManager.instance.Get_Stage_Data();
+        var stage_data = StageManager.Get_Stage_Data();
         Cur_Move_Count = stage_data.iMoveCount;
         Cur_Claer_Count = stage_data.iClear_Count;
 
@@ -43,7 +43,7 @@ public class ClearManager : MonoBehaviour
     public void Update_Clear_Count()
     {
         //스테이지 정보에서 클리어 kind 가져와 갯수 확인
-        var stage_data = PlayManager.instance.Get_Stage_Data();
+        var stage_data = StageManager.Get_Stage_Data();
         var tilelist = TileManager.instance.Get_Tile;
         var count = tilelist.FindAll(x => x != null && x.Get_Tile_Kind() == stage_data.Clear_Kind);
 
