@@ -10,7 +10,7 @@ public class ScoreManager : MonoBehaviour
 
     [Header("획득할 점수")]
     [SerializeField] int Score;
-    public int GetScore() => Score;
+
 
     [Header("메달 색상 설정")]
     [SerializeField]
@@ -22,6 +22,7 @@ public class ScoreManager : MonoBehaviour
     [SerializeField] Color Default_Medal_Color = Color.gray; // 기본 메달 색상
 
     int CurScore;
+    public int GetScore() => CurScore;
 
     void Awake()
     {

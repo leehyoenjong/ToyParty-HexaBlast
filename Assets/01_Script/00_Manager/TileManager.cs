@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using DG.Tweening;
 
 public class TileManager : MonoBehaviour
 {
@@ -242,162 +243,166 @@ public class TileManager : MonoBehaviour
 
 
     /// <summary>
-    /// 매치 성공 후 빈자리 찾아가기
+    /// 매치 성공 후 빈자리로 타일 이동
     /// </summary>
     public bool All_Scan_Move()
     {
-        bool isMove = false;
-        bool checkmove = true;
-        while (true)
+        // 이 함수는 이제 StartCoroutine(ProcessSequentialMoves()) 호출과 함께 사용해야 함
+        bool anyMovement = false;
+
+        // 1. 모든 수직 이동 처리
+        bool verticalMoved = ExecuteAllVerticalMoves();
+        if (verticalMoved)
         {
-            if (!checkmove)
+            anyMovement = true;
+        }
+
+        // 2. 모든 오른쪽 대각선 이동 처리
+        bool diagonalRightMoved = ExecuteAllDiagonalRightMoves();
+        if (diagonalRightMoved)
+        {
+            anyMovement = true;
+        }
+
+        // 3. 모든 왼쪽 대각선 이동 처리
+        bool diagonalLeftMoved = ExecuteAllDiagonalLeftMoves();
+        if (diagonalLeftMoved)
+        {
+            anyMovement = true;
+        }
+
+        return anyMovement;
+    }
+
+    /// <summary>
+    /// 순차적인 타일 이동 처리 코루틴
+    /// </summary>
+    private IEnumerator ProcessSequentialMoves()
+    {
+        bool continueMoving = true;
+
+        while (continueMoving)
+        {
+            continueMoving = false;
+
+            // 1. 수직 이동 먼저 처리
+            bool verticalMoved = ExecuteAllVerticalMoves();
+            if (verticalMoved)
             {
-                break;
-            }
-            checkmove = false;
-
-            //L_Tile_Slot를 딕셔너리 형태로 key가 GetPoint의 item1, value가 리스트형태로 GetPoint의 item2를 가지는 딕셔너리 생성
-            var dic = L_Tile_Slot
-                        .GroupBy(slot => slot.GetPoint.Item1)
-                        .ToDictionary(group => group.Key, group => group.Select(slot => slot).ToList());
-
-            //위에서 아래로
-            foreach (var item in dic)
-            {
-                var slot = item.Value;
-                //제일 아래부터 체크 (Item2가 작은 것부터 정렬)
-                var orderedSlots = slot.OrderBy(x => x.GetPoint.Item2).ToList();
-
-                foreach (var items in orderedSlots)
-                {
-                    if (items.GetTile != null)
-                    {
-                        continue;
-                    }
-
-                    //빈공간일 경우 y값 기준 가장 가까운 Tile찾기
-                    var aboveTiles = orderedSlots
-                        .Where(s => s.GetPoint.Item2 > items.GetPoint.Item2 && s.GetTile != null)
-                        .OrderBy(s => s.GetPoint.Item2)
-                        .FirstOrDefault();
-
-                    //가장 가까운 tile이 없으면 continue;
-                    if (aboveTiles == null)
-                    {
-                        continue;
-                    }
-
-                    //가장 가까운 tile을
-                    var tile = aboveTiles.GetTile;
-
-                    //가장 가까운 tile이 있으면 Set_Swap함수를 이용해 이동시키기
-                    tile.Set_Swap(items);
-
-                    //기존 슬롯은 정보 리셋
-                    aboveTiles.Reset();
-                    checkmove = true;
-                    isMove = true;
-                }
+                continueMoving = true;
+                yield return StartCoroutine(IE_Wait_For_Tile_Animations());
+                continue;
             }
 
-            //오른쪽 대각선
-            foreach (var item in dic.OrderByDescending(x => x.Key))
+            // 2. 모든 오른쪽 대각선 이동을 한 번에 처리
+            bool diagonalRightMoved = ExecuteAllDiagonalRightMoves();
+            if (diagonalRightMoved)
             {
-                var slot = item.Value;
-                //제일 위부터 체크 (Item2가 큰 것부터 정렬)
-                var orderedSlots = slot.OrderByDescending(x => x.GetPoint.Item2).ToList();
-
-                foreach (var items in orderedSlots)
-                {
-                    if (items.GetTile != null)
-                    {
-                        continue;
-                    }
-
-                    //빈공간일 경우 오른쪽 위(0.5f 위) 타일 찾기
-                    var topRightSlot = L_Tile_Slot
-                        .Where(s =>
-                            s.GetPoint.Item1 == items.GetPoint.Item1 + 1f &&
-                            Mathf.Approximately(s.GetPoint.Item2, items.GetPoint.Item2 + 0.5f) &&
-                            s.GetTile != null)
-                        .FirstOrDefault();
-
-                    //가장 가까운 tile이 없으면 continue;
-                    if (topRightSlot == null)
-                    {
-                        continue;
-                    }
-
-                    //가장 가까운 tile을
-                    var tile = topRightSlot.GetTile;
-
-                    //가장 가까운 tile이 있으면 Set_Swap함수를 이용해 이동시키기
-                    tile.Set_Swap(items);
-
-                    //기존 슬롯은 정보 리셋
-                    topRightSlot.Reset();
-
-                    //대각선은 한번이라도 움직이면 다른 것들 다시 체크
-                    checkmove = true;
-                    isMove = true;
-                    break;
-                }
-                if (checkmove)
-                {
-                    break;
-                }
+                continueMoving = true;
+                yield return StartCoroutine(IE_Wait_For_Tile_Animations());
+                continue;
             }
 
-
-            //왼쪽 대각선
-            foreach (var item in dic.OrderBy(x => x.Key))
+            // 3. 모든 왼쪽 대각선 이동을 한 번에 처리
+            bool diagonalLeftMoved = ExecuteAllDiagonalLeftMoves();
+            if (diagonalLeftMoved)
             {
-                var slot = item.Value;
-                //제일 위부터 체크 (Item2가 큰 것부터 정렬)
-                var orderedSlots = slot.OrderByDescending(x => x.GetPoint.Item2).ToList();
-
-                foreach (var items in orderedSlots)
-                {
-                    if (items.GetTile != null)
-                    {
-                        continue;
-                    }
-
-                    //빈공간일 경우 왼쪽 위(0.5f 위) 타일 찾기
-                    var topleftSlot = L_Tile_Slot
-                        .Where(s =>
-                            s.GetPoint.Item1 == items.GetPoint.Item1 - 1f &&
-                            Mathf.Approximately(s.GetPoint.Item2, items.GetPoint.Item2 + 0.5f) &&
-                            s.GetTile != null)
-                        .FirstOrDefault();
-
-                    //가장 가까운 tile이 없으면 continue;
-                    if (topleftSlot == null)
-                    {
-                        continue;
-                    }
-
-                    //가장 가까운 tile을
-                    var tile = topleftSlot.GetTile;
-
-                    //가장 가까운 tile이 있으면 Set_Swap함수를 이용해 이동시키기
-                    tile.Set_Swap(items);
-
-                    //기존 슬롯은 정보 리셋
-                    topleftSlot.Reset();
-
-                    //대각선은 한번이라도 움직이면 다른 것들 다시 체크
-                    checkmove = true;
-                    isMove = true;
-                    break;
-                }
-                if (checkmove)
-                {
-                    break;
-                }
+                continueMoving = true;
+                yield return StartCoroutine(IE_Wait_For_Tile_Animations());
+                continue;
             }
         }
-        return isMove;
+    }
+
+    /// <summary>
+    /// 수직 방향(위에서 아래로) 타일 이동
+    /// </summary>
+    private bool MoveDownVertical(Dictionary<float, List<UI_Tile_Slot>> columnDict)
+    {
+        bool hasMoved = false;
+
+        // 각 열에 대해 처리
+        foreach (var column in columnDict)
+        {
+            // 아래에서 위로 슬롯 정렬 (y좌표 기준)
+            var orderedSlots = column.Value.OrderBy(x => x.GetPoint.Item2).ToList();
+
+            // 각 슬롯에 대해 빈 공간 처리
+            foreach (var emptySlot in orderedSlots)
+            {
+                // 이미 타일이 있는 슬롯은 건너뜀
+                if (emptySlot.GetTile != null)
+                    continue;
+
+                // 빈 슬롯 위에 있는 가장 가까운 타일 찾기
+                var filledSlot = orderedSlots
+                    .Where(s => s.GetPoint.Item2 > emptySlot.GetPoint.Item2 && s.GetTile != null)
+                    .OrderBy(s => s.GetPoint.Item2)
+                    .FirstOrDefault();
+
+                // 위에 타일이 없으면 처리 건너뜀
+                if (filledSlot == null)
+                    continue;
+
+                // 타일 이동
+                var tile = filledSlot.GetTile;
+                tile.Set_Swap(emptySlot);
+                filledSlot.Reset();
+
+                hasMoved = true;
+            }
+        }
+
+        return hasMoved;
+    }
+
+    /// <summary>
+    /// 모든 타일의 애니메이션이 완료될 때까지 기다림
+    /// </summary>
+    private IEnumerator IE_Wait_For_Tile_Animations()
+    {
+        // 시작하기 전에 짧은 대기 (애니메이션이 시작될 시간 확보)
+        yield return new WaitForSeconds(0.02f);
+
+        // 최대 대기 시간 설정 (무한 대기 방지)
+        float maxWaitTime = 0.5f; // 다시 0.5초로 충분한 대기 시간 제공
+        float elapsedTime = 0f;
+        
+        // 추가 안전 대기 횟수 - 모든 타일이 멈춘 것으로 확인되었지만, 추가로 대기하는 프레임 수
+        int safetyFrames = 3;
+        int currentSafetyFrame = 0;
+
+        while (elapsedTime < maxWaitTime)
+        {
+            bool anyMoving = false;
+
+            // 모든 타일 체크
+            foreach (var tile in L_Tile)
+            {
+                if (tile != null && tile.Check_Is_Moving())
+                {
+                    anyMoving = true;
+                    currentSafetyFrame = 0; // 움직이는 타일이 있으면 안전 카운터 리셋
+                    break;
+                }
+            }
+
+            // 모든 타일이 정지 상태라면 안전 프레임 카운트 증가
+            if (!anyMoving)
+            {
+                currentSafetyFrame++;
+                
+                // 안전 프레임 카운트가 목표에 도달하면 종료
+                if (currentSafetyFrame >= safetyFrames)
+                {
+                    yield break;
+                }
+            }
+
+            // 다음 프레임까지 대기
+            yield return null;
+            elapsedTime += Time.deltaTime;
+        }
     }
 
     /// <summary>
@@ -504,8 +509,11 @@ public class TileManager : MonoBehaviour
     /// <returns></returns>
     IEnumerator IE_Swap()
     {
+        // 애니메이션 완료 대기
+        yield return StartCoroutine(IE_Wait_For_Tile_Animations());
+
         //이동 후 잠깐 딜레이
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForEndOfFrame();
 
         // 각 타일의 슬롯 가져오기
         var firstslot = FirstTouch_Tile.Get_Tile_Slot;
@@ -518,10 +526,16 @@ public class TileManager : MonoBehaviour
         Reset();
         if (!isboom)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForEndOfFrame();
             Debug.Log("위치 원상복구");
-            first.Set_Swap(secondslot);
-            second.Set_Swap(firstslot);
+
+            // 원상복구 시에도 애니메이션 적용 (이 부분은 사용자 경험을 위해 애니메이션 적용)
+            first.Set_Swap(secondslot, true);
+            second.Set_Swap(firstslot, true);
+
+            // 원상복구 애니메이션 대기
+            yield return StartCoroutine(IE_Wait_For_Tile_Animations());
+
             PlayManager.instance.GetStay = false;
             yield break;
         }
@@ -545,21 +559,95 @@ public class TileManager : MonoBehaviour
     /// </summary>
     public IEnumerator IE_Move_And_Boom()
     {
-        var wait = new WaitForSeconds(0.25f);
+        // 최소 딜레이로 설정
+        var shortWait = new WaitForEndOfFrame();
 
         //이동, 생성, 삭제
         while (true)
         {
             //이동
-            yield return wait;
-            var ismove = All_Scan_Move();
+            yield return shortWait;
 
+            // 단계별 이동 처리
+            bool anyMovement = false;
+
+            // 1. 모든 가능한 수직 이동 처리
+            bool verticalMoved = ExecuteAllVerticalMoves();
+            if (verticalMoved)
+            {
+                anyMovement = true;
+                // 수직 이동 애니메이션 대기
+                yield return StartCoroutine(IE_Wait_For_Tile_Animations());
+            }
+
+            // 2. 모든 오른쪽 대각선 이동을 한 번에 처리
+            bool diagonalRightMoved = ExecuteAllDiagonalRightMoves();
+            if (diagonalRightMoved)
+            {
+                anyMovement = true;
+                // 오른쪽 대각선 이동 애니메이션 대기
+                yield return StartCoroutine(IE_Wait_For_Tile_Animations());
+            }
+
+            // 3. 모든 왼쪽 대각선 이동을 한 번에 처리
+            bool diagonalLeftMoved = ExecuteAllDiagonalLeftMoves();
+            if (diagonalLeftMoved)
+            {
+                anyMovement = true;
+                // 왼쪽 대각선 이동 애니메이션 대기
+                yield return StartCoroutine(IE_Wait_For_Tile_Animations());
+            }
+
+            // 모든 이동 종류 재시도 - 대각선 이동 후 수직 이동이 가능할 수 있음
+            bool additionalMoves = false;
+            do {
+                additionalMoves = false;
+                
+                // 다시 수직 이동 확인
+                verticalMoved = ExecuteAllVerticalMoves();
+                if (verticalMoved)
+                {
+                    anyMovement = true;
+                    additionalMoves = true;
+                    yield return StartCoroutine(IE_Wait_For_Tile_Animations());
+                }
+                
+                // 다시 오른쪽 대각선 이동 확인
+                if (!verticalMoved) {
+                    diagonalRightMoved = ExecuteAllDiagonalRightMoves();
+                    if (diagonalRightMoved)
+                    {
+                        anyMovement = true;
+                        additionalMoves = true;
+                        yield return StartCoroutine(IE_Wait_For_Tile_Animations());
+                    }
+                    
+                    // 다시 왼쪽 대각선 이동 확인
+                    if (!diagonalRightMoved) {
+                        diagonalLeftMoved = ExecuteAllDiagonalLeftMoves();
+                        if (diagonalLeftMoved)
+                        {
+                            anyMovement = true;
+                            additionalMoves = true;
+                            yield return StartCoroutine(IE_Wait_For_Tile_Animations());
+                        }
+                    }
+                }
+            } while (additionalMoves);
+
+            bool ismove = anyMovement;
+
+            // 모든 이동이 확실히 완료된 후에 생성 단계 진행
+            yield return new WaitForSeconds(0.05f);
+            
             //생성
-            yield return wait;
             var iscraete = PlayManager.instance.Get_UI_Grid().Create_None_Slot_Tile();
 
+            // 새로 생성된 타일의 애니메이션이 완료될 때까지 대기
+            yield return StartCoroutine(IE_Wait_For_Tile_Animations());
+            yield return new WaitForSeconds(0.05f);
+
             //삭제
-            yield return wait;
             var isboom = All_Scan_Boom();
 
             //생성 삭제 이동 아무것도 없다면 종료
@@ -583,12 +671,28 @@ public class TileManager : MonoBehaviour
 
             //파괴 가능한 타일이 없다면 전체 섞기
             Set_All_Tile_Random();
-            yield return wait;
+            yield return shortWait;
+
+            // 타일 섞기 후 애니메이션이 완료될 때까지 대기
+            yield return StartCoroutine(IE_Wait_For_Tile_Animations());
         }
 
         ClearManager.instance.Set_Clear();
-        yield return wait;
+        yield return shortWait;
         PlayManager.instance.GetStay = false;
+    }
+
+    /// <summary>
+    /// 모든 수직 이동 실행
+    /// </summary>
+    private bool ExecuteAllVerticalMoves()
+    {
+        // 타일 슬롯을 x좌표(Item1)별로 그룹화하여 딕셔너리 생성
+        var columnDict = L_Tile_Slot
+                    .GroupBy(slot => slot.GetPoint.Item1)
+                    .ToDictionary(group => group.Key, group => group.Select(slot => slot).ToList());
+
+        return MoveDownVertical(columnDict);
     }
 
     /// <summary>
@@ -620,15 +724,15 @@ public class TileManager : MonoBehaviour
                     if (targetSlot == null || targetSlot.GetTile == null)
                         continue;
 
-                    // 임시로 타일 교환
+                    // 임시로 타일 교환 (애니메이션 없이)
                     var tempTile1 = slot.GetTile;
                     var tempTile2 = targetSlot.GetTile;
                     var tempSlot1 = slot;
                     var tempSlot2 = targetSlot;
 
-                    // 임시 교환
-                    tempTile1.Set_Swap(tempSlot2);
-                    tempTile2.Set_Swap(tempSlot1);
+                    // 임시 교환 - 애니메이션 없이 교환
+                    tempTile1.Set_Swap(tempSlot2, false);
+                    tempTile2.Set_Swap(tempSlot1, false);
 
                     // 매치 확인
                     bool hasMatch = false;
@@ -640,9 +744,9 @@ public class TileManager : MonoBehaviour
                         hasMatch = true;
                     }
 
-                    // 원래 위치로 복구
-                    tempTile1.Set_Swap(tempSlot1);
-                    tempTile2.Set_Swap(tempSlot2);
+                    // 원래 위치로 복구 - 애니메이션 없이 복구
+                    tempTile1.Set_Swap(tempSlot1, false);
+                    tempTile2.Set_Swap(tempSlot2, false);
 
                     if (hasMatch)
                     {
@@ -683,12 +787,129 @@ public class TileManager : MonoBehaviour
             tile.Get_Tile_Slot.Reset();
         }
 
-        // 랜덤으로 섞인 슬롯에 타일 재배치
+        // 랜덤으로 섞인 슬롯에 타일 재배치 (애니메이션 적용)
         for (int i = 0; i < basicTiles.Count; i++)
         {
-            basicTiles[i].Set_Swap(basicTileSlots[i]);
+            // 타일 섞기는 사용자 경험을 위해 애니메이션 적용
+            basicTiles[i].Set_Swap(basicTileSlots[i], true);
         }
 
         Debug.Log($"타일 {basicTiles.Count}개 섞기 완료");
+    }
+
+    /// <summary>
+    /// 오른쪽 대각선 방향 타일 이동 - 모든 가능한 타일을 한 번에 처리
+    /// </summary>
+    private bool ExecuteAllDiagonalRightMoves()
+    {
+        bool anyMoved = false;
+        
+        // 타일 슬롯을 x좌표(Item1)별로 그룹화하여 딕셔너리 생성
+        var columnDict = L_Tile_Slot
+                    .GroupBy(slot => slot.GetPoint.Item1)
+                    .ToDictionary(group => group.Key, group => group.Select(slot => slot).ToList());
+                    
+        // 이동 가능한 모든 타일과 목표 슬롯을 미리 계산
+        List<(UI_Tile tile, UI_Tile_Slot targetSlot, UI_Tile_Slot sourceSlot)> movesMap = new List<(UI_Tile, UI_Tile_Slot, UI_Tile_Slot)>();
+        
+        // 오른쪽에서 왼쪽으로 열 정렬 (x좌표 기준)
+        foreach (var column in columnDict.OrderByDescending(x => x.Key))
+        {
+            // 위에서 아래로 슬롯 정렬 (y좌표 기준)
+            var orderedSlots = column.Value.OrderByDescending(x => x.GetPoint.Item2).ToList();
+
+            foreach (var emptySlot in orderedSlots)
+            {
+                // 이미 타일이 있는 슬롯은 건너뜀
+                if (emptySlot.GetTile != null)
+                    continue;
+
+                // 오른쪽 위(대각선) 타일 찾기
+                var topRightSlot = L_Tile_Slot
+                    .Where(s =>
+                        s.GetPoint.Item1 == emptySlot.GetPoint.Item1 + 1f &&
+                        Mathf.Approximately(s.GetPoint.Item2, emptySlot.GetPoint.Item2 + 0.5f) &&
+                        s.GetTile != null)
+                    .FirstOrDefault();
+
+                if (topRightSlot == null)
+                    continue;
+                    
+                // 이동할 타일과 슬롯을 이동 맵에 추가 - 이미 다른 이동에 포함된 타일인지 확인
+                if (movesMap.Any(m => m.tile == topRightSlot.GetTile || m.targetSlot == emptySlot))
+                    continue;
+                    
+                movesMap.Add((topRightSlot.GetTile, emptySlot, topRightSlot));
+            }
+        }
+        
+        // 모든 이동을 한 번에 실행
+        foreach (var move in movesMap)
+        {
+            // isDiagonal = true로 설정하여 대각선 이동임을 전달
+            move.tile.Set_Swap(move.targetSlot, true, true);
+            move.sourceSlot.Reset();
+            anyMoved = true;
+        }
+
+        return anyMoved;
+    }
+
+    /// <summary>
+    /// 왼쪽 대각선 방향 타일 이동 - 모든 가능한 타일을 한 번에 처리
+    /// </summary>
+    private bool ExecuteAllDiagonalLeftMoves()
+    {
+        bool anyMoved = false;
+        
+        // 타일 슬롯을 x좌표(Item1)별로 그룹화하여 딕셔너리 생성
+        var columnDict = L_Tile_Slot
+                    .GroupBy(slot => slot.GetPoint.Item1)
+                    .ToDictionary(group => group.Key, group => group.Select(slot => slot).ToList());
+                    
+        // 이동 가능한 모든 타일과 목표 슬롯을 미리 계산
+        List<(UI_Tile tile, UI_Tile_Slot targetSlot, UI_Tile_Slot sourceSlot)> movesMap = new List<(UI_Tile, UI_Tile_Slot, UI_Tile_Slot)>();
+        
+        // 왼쪽에서 오른쪽으로 열 정렬 (x좌표 기준)
+        foreach (var column in columnDict.OrderBy(x => x.Key))
+        {
+            // 위에서 아래로 슬롯 정렬 (y좌표 기준)
+            var orderedSlots = column.Value.OrderByDescending(x => x.GetPoint.Item2).ToList();
+
+            foreach (var emptySlot in orderedSlots)
+            {
+                // 이미 타일이 있는 슬롯은 건너뜀
+                if (emptySlot.GetTile != null)
+                    continue;
+
+                // 왼쪽 위(대각선) 타일 찾기
+                var topLeftSlot = L_Tile_Slot
+                    .Where(s =>
+                        s.GetPoint.Item1 == emptySlot.GetPoint.Item1 - 1f &&
+                        Mathf.Approximately(s.GetPoint.Item2, emptySlot.GetPoint.Item2 + 0.5f) &&
+                        s.GetTile != null)
+                    .FirstOrDefault();
+
+                if (topLeftSlot == null)
+                    continue;
+                    
+                // 이동할 타일과 슬롯을 이동 맵에 추가 - 이미 다른 이동에 포함된 타일인지 확인
+                if (movesMap.Any(m => m.tile == topLeftSlot.GetTile || m.targetSlot == emptySlot))
+                    continue;
+                    
+                movesMap.Add((topLeftSlot.GetTile, emptySlot, topLeftSlot));
+            }
+        }
+        
+        // 모든 이동을 한 번에 실행
+        foreach (var move in movesMap)
+        {
+            // isDiagonal = true로 설정하여 대각선 이동임을 전달
+            move.tile.Set_Swap(move.targetSlot, true, true);
+            move.sourceSlot.Reset();
+            anyMoved = true;
+        }
+
+        return anyMoved;
     }
 }
