@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.IMGUI.Controls;
-using UnityEditor.SearchService;
 using UnityEngine;
 
 public class TileManager : MonoBehaviour

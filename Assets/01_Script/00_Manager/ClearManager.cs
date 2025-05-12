@@ -9,6 +9,7 @@ public class ClearManager : MonoBehaviour
 
     [SerializeField] UI_Move_Profile Ui_Move_Profile;
     public UI_Move_Profile Get_UI_Move_Profile() => Ui_Move_Profile;
+    [SerializeField] UI_Clear uI_Clear;
 
     int Cur_Move_Count;
     int Cur_Claer_Count;
@@ -38,6 +39,15 @@ public class ClearManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 이동 업데이트
+    /// </summary>
+    public void Update_Move_Count(int addcount)
+    {
+        Cur_Move_Count += addcount;
+        Ui_Move_Profile.Update_Move_Count(Cur_Move_Count);
+    }
+
+    /// <summary>
     /// 클리어 횟수 업데이트 
     /// </summary>
     public void Update_Clear_Count()
@@ -56,16 +66,11 @@ public class ClearManager : MonoBehaviour
     /// </summary>
     public void Set_Clear()
     {
-        //이동 횟수 및 클리어 횟수 남아 있다면 return
-        if (Cur_Move_Count > 0 && Cur_Claer_Count > 0)
-        {
-            return;
-        }
-
         //클리어 조건 만족 시 
         if (Cur_Claer_Count <= 0)
         {
             //클리어 처리 
+            uI_Clear.Set_Sucess();
             return;
         }
 
@@ -73,6 +78,7 @@ public class ClearManager : MonoBehaviour
         if (Cur_Claer_Count <= 0)
         {
             //실패처리
+            uI_Clear.Set_Faild();
         }
     }
 }

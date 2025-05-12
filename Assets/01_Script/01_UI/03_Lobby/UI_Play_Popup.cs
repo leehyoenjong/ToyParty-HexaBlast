@@ -26,7 +26,6 @@ public class UI_Play_Popup : MonoBehaviour
 
     public void Btn_Play()
     {
-
         SceneManager.LoadScene("01_Play");
     }
 

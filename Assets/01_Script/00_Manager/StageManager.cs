@@ -8,6 +8,18 @@ public class StageManager : MonoBehaviour
 
     static int CurStage;
 
+    static int MaxLevel = 21;
+
+    /// <summary>
+    /// 최고단계인지 체크
+    /// </summary>
+    /// <param name="stage"></param>
+    /// <returns></returns>
+    public static bool Check_MaxLevel(int stage)
+    {
+        return stage > MaxLevel;
+    }
+
     /// <summary>
     /// 스테이지 데이터 가져오기
     /// </summary>

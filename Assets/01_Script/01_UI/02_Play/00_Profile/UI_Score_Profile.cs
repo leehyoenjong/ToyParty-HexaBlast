@@ -12,18 +12,9 @@ public class UI_Score_Profile : MonoBehaviour
     [SerializeField] Image Img_Gage;
     [SerializeField] RectTransform Rt_GageParent; // 게이지의 부모 RectTransform
 
-    // 메달 색상 설정
-    [SerializeField]
-    Color[] Medal_Colors = new Color[3] {
-        new Color(0.8f, 0.5f, 0.2f), // 동메달 색상
-        new Color(0.75f, 0.75f, 0.75f), // 은메달 색상
-        new Color(1.0f, 0.84f, 0.0f), // 금메달 색상
-    };
-    [SerializeField] Color Default_Medal_Color = Color.gray; // 기본 메달 색상
-
     public void Initailized()
     {
-        var stagedata = StageManager.Get_Stage_Data();;
+        var stagedata = StageManager.Get_Stage_Data();
         //메달 위치 셋팅
         var max = stagedata.iMaxScore;
         var medal = stagedata.iMedalScore;
@@ -91,28 +82,10 @@ public class UI_Score_Profile : MonoBehaviour
         T_Score.text = score.ToString();
 
         //게이지
-        var stagedata = StageManager.Get_Stage_Data();;
+        var stagedata = StageManager.Get_Stage_Data();
         Img_Gage.fillAmount = (float)score / (float)stagedata.iMaxScore;
 
-        //점수에 따른 메달 색 설정
-        UpdateMedalColor(score, stagedata.iMedalScore);
-    }
-
-    // 점수에 따라 메달 색상 업데이트
-    private void UpdateMedalColor(int score, int[] medalScores)
-    {
-        // LINQ를 사용하여 현재 점수가 도달한 가장 높은 메달 등급 찾기
-        int medalIndex = System.Array.FindLastIndex(medalScores, m => score >= m);
-
-        // 메달 색상 설정
-        if (medalIndex >= 0 && medalIndex < Medal_Colors.Length)
-        {
-            Img_Main_Madel.color = Medal_Colors[medalIndex];
-        }
-        else
-        {
-            // 메달 획득 실패 시 기본 색상
-            Img_Main_Madel.color = Default_Medal_Color;
-        }
+        //점수에 따른 메달 색 설정 - ScoreManager에서 색상 가져오기
+        Img_Main_Madel.color = ScoreManager.instance.GetMedalColor();
     }
 }
