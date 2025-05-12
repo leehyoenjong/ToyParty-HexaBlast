@@ -1,22 +1,25 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public class UI_Score_Profile : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI T_Score;
     [SerializeField] RectTransform[] Rt_Medal;
     [SerializeField] RectTransform[] Rt_MedalPoint;
+    [SerializeField] Image Img_Main_Madel;
     [SerializeField] Image Img_Gage;
     [SerializeField] RectTransform Rt_GageParent; // 게이지의 부모 RectTransform
-    [SerializeField] bool useParentSpace = true; // 부모 공간 기준으로 계산할지 여부
 
-    // 디버깅 및 수동 조정용 변수
-    [SerializeField] bool useDebugMode = false; // 디버그 모드 활성화
-    [SerializeField] float manualOffsetX = 0f; // 수동 X축 오프셋
-    [SerializeField] float manualScaleX = 1f; // 수동 X축 배율
-    [SerializeField] bool useAbsolutePosition = true; // 절대 위치 사용 여부
-    [SerializeField] bool centerMedals = true; // 메달을 중앙에 배치할지 여부
+    // 메달 색상 설정
+    [SerializeField]
+    Color[] Medal_Colors = new Color[3] {
+        new Color(0.8f, 0.5f, 0.2f), // 동메달 색상
+        new Color(0.75f, 0.75f, 0.75f), // 은메달 색상
+        new Color(1.0f, 0.84f, 0.0f), // 금메달 색상
+    };
+    [SerializeField] Color Default_Medal_Color = Color.gray; // 기본 메달 색상
 
     public void Initailized()
     {
@@ -32,156 +35,54 @@ public class UI_Score_Profile : MonoBehaviour
         }
 
         // 게이지 RectTransform 가져오기
-        RectTransform gageRect = Img_Gage.rectTransform;
-        RectTransform parentRect = Rt_GageParent;
+        RectTransform rect_gage = Img_Gage.rectTransform;
 
-        // 게이지와 메달의 캔버스 기준 위치를 계산
-        Canvas canvas = GetComponentInParent<Canvas>();
+        // 게이지의 월드 위치 계산
+        Vector3[] corners = new Vector3[4]; // 0:좌하단, 1:좌상단, 2:우상단, 3:우하단
+        rect_gage.GetWorldCorners(corners);
 
-        if (useAbsolutePosition && canvas != null)
+        // 게이지의 왼쪽 가장자리와 너비
+        float left_edge = corners[0].x;
+        float width = corners[3].x - corners[0].x;
+
+        // 메달 위치 설정
+        for (int i = 0; i < medal.Length; i++)
         {
-            // 게이지의 월드 위치 (캔버스 공간)
-            Vector3[] gageCorners = new Vector3[4]; // 0:좌하단, 1:좌상단, 2:우상단, 3:우하단
-            gageRect.GetWorldCorners(gageCorners);
+            float per = (float)medal[i] / (float)max;
+            float pos_x = left_edge + (width * per);
 
-            // 게이지의 실제 왼쪽 가장자리와 너비 (월드 좌표계)
-            float gageLeftEdge = gageCorners[0].x;
-            float gageWidth = gageCorners[3].x - gageCorners[0].x;
-
-            if (useDebugMode)
+            // 메달 위치 설정
+            if (i < Rt_Medal.Length)
             {
-                Debug.Log($"Gage Left: {gageLeftEdge}, Width: {gageWidth}");
-                for (int i = 0; i < 4; i++)
-                {
-                    Debug.Log($"Gage Corner {i}: {gageCorners[i]}");
-                }
+                Set_Medal_Position(Rt_Medal[i], pos_x);
             }
 
-            for (int i = 0; i < medal.Length; i++)
+            // 메달 포인트 위치 설정
+            if (i < Rt_MedalPoint.Length)
             {
-                var per = (float)medal[i] / (float)max;
-
-                // 메달 위치 계산 (월드 공간)
-                float worldX = gageLeftEdge + (gageWidth * per * manualScaleX) + manualOffsetX;
-
-                // 메달 위치 설정 (월드 좌표계에서 로컬 좌표계로 변환)
-                if (i < Rt_Medal.Length)
-                {
-                    SetWorldPositionX(Rt_Medal[i], worldX, centerMedals);
-                }
-
-                // 메달 포인트 위치 설정
-                if (i < Rt_MedalPoint.Length)
-                {
-                    SetWorldPositionX(Rt_MedalPoint[i], worldX, centerMedals);
-                }
-            }
-        }
-        else
-        {
-            // 기존 방식 (로컬 좌표계)
-            // 부모 공간에서의 게이지 위치 계산
-            float parentWidth = parentRect.rect.width;
-            float gageWidth = gageRect.rect.width;
-
-            // 게이지의 앵커 위치 (부모 기준)
-            Vector2 anchorMin = gageRect.anchorMin;
-            Vector2 anchorMax = gageRect.anchorMax;
-            Vector2 pivot = gageRect.pivot;
-
-            // 게이지의 왼쪽 가장자리 계산
-            float anchorWidth = (anchorMax.x - anchorMin.x) * parentWidth;
-            float leftAnchorPos = anchorMin.x * parentWidth;
-            float pivotOffset = pivot.x * gageRect.sizeDelta.x;
-            float leftEdge = leftAnchorPos + gageRect.anchoredPosition.x - pivotOffset;
-
-            if (useDebugMode)
-            {
-                Debug.Log($"Anchor Width: {anchorWidth}, Left Anchor: {leftAnchorPos}");
-                Debug.Log($"Pivot Offset: {pivotOffset}, Left Edge: {leftEdge}");
-            }
-
-            for (int i = 0; i < medal.Length; i++)
-            {
-                var per = (float)medal[i] / (float)max;
-
-                // 메달 위치 계산
-                float medalX;
-
-                if (useParentSpace)
-                {
-                    // 부모 공간 기준으로 계산
-                    medalX = leftEdge + (gageWidth * per * manualScaleX) + manualOffsetX;
-                }
-                else
-                {
-                    // 게이지 자체 공간 기준으로 계산
-                    medalX = leftEdge + (anchorWidth * per * manualScaleX) + manualOffsetX;
-                }
-
-                // 메달 위치 설정 (x값만 변경)
-                if (i < Rt_Medal.Length)
-                {
-                    Vector2 medalPos = Rt_Medal[i].anchoredPosition;
-
-                    // 중앙 위치로 조정
-                    if (centerMedals)
-                    {
-                        medalX -= Rt_Medal[i].rect.width * 0.5f;
-                    }
-
-                    medalPos.x = medalX;
-                    Rt_Medal[i].anchoredPosition = medalPos;
-                }
-
-                // 메달 포인트 위치 설정 (x값만 변경)
-                if (i < Rt_MedalPoint.Length)
-                {
-                    Vector2 medalPointPos = Rt_MedalPoint[i].anchoredPosition;
-
-                    // 중앙 위치로 조정
-                    if (centerMedals)
-                    {
-                        medalX -= Rt_MedalPoint[i].rect.width * 0.5f;
-                    }
-
-                    medalPointPos.x = medalX;
-                    Rt_MedalPoint[i].anchoredPosition = medalPointPos;
-                }
+                Set_Medal_Position(Rt_MedalPoint[i], pos_x);
             }
         }
     }
 
-    // 월드 좌표계 X 위치를 설정하는 헬퍼 메소드
-    private void SetWorldPositionX(RectTransform rectTransform, float worldX, bool centered = true)
+    // 메달 위치 설정 (중앙 정렬)
+    private void Set_Medal_Position(RectTransform rect, float world_x)
     {
         // 현재 월드 위치 가져오기
         Vector3[] corners = new Vector3[4];
-        rectTransform.GetWorldCorners(corners);
+        rect.GetWorldCorners(corners);
 
-        float currentWorldX;
+        // 중앙 위치 계산
+        float width = corners[3].x - corners[0].x;
+        float current_x = corners[0].x + (width * 0.5f);
 
-        if (centered)
-        {
-            // 중앙 위치로 설정
-            float width = corners[3].x - corners[0].x;
-            currentWorldX = corners[0].x + (width * 0.5f);
-        }
-        else
-        {
-            // 왼쪽 가장자리 위치로 설정
-            currentWorldX = corners[0].x;
-        }
+        // 위치 차이 계산
+        float offset = world_x - current_x;
 
-        // 현재 로컬 위치
-        Vector2 localPos = rectTransform.anchoredPosition;
-
-        // 위치 차이만큼 로컬 위치 조정
-        float offset = worldX - currentWorldX;
-        localPos.x += offset;
-
-        // 새 위치 설정
-        rectTransform.anchoredPosition = localPos;
+        // 현재 위치에 오프셋 적용
+        Vector2 pos = rect.anchoredPosition;
+        pos.x += offset;
+        rect.anchoredPosition = pos;
     }
 
     public void Update_Score(int score)
@@ -192,5 +93,26 @@ public class UI_Score_Profile : MonoBehaviour
         //게이지
         var stagedata = PlayManager.instance.Get_Stage_Data();
         Img_Gage.fillAmount = (float)score / (float)stagedata.iMaxScore;
+
+        //점수에 따른 메달 색 설정
+        UpdateMedalColor(score, stagedata.iMedalScore);
+    }
+
+    // 점수에 따라 메달 색상 업데이트
+    private void UpdateMedalColor(int score, int[] medalScores)
+    {
+        // LINQ를 사용하여 현재 점수가 도달한 가장 높은 메달 등급 찾기
+        int medalIndex = System.Array.FindLastIndex(medalScores, m => score >= m);
+
+        // 메달 색상 설정
+        if (medalIndex >= 0 && medalIndex < Medal_Colors.Length)
+        {
+            Img_Main_Madel.color = Medal_Colors[medalIndex];
+        }
+        else
+        {
+            // 메달 획득 실패 시 기본 색상
+            Img_Main_Madel.color = Default_Medal_Color;
+        }
     }
 }
