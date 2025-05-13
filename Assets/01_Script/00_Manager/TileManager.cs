@@ -300,7 +300,7 @@ public class TileManager : MonoBehaviour
                     .FirstOrDefault();
 
                 // 위에 타일이 없으면 처리 건너뜀
-                if (filledSlot == null)
+                if (filledSlot == null || filledSlot.GetTile == null)
                     continue;
 
                 // 타일 이동
