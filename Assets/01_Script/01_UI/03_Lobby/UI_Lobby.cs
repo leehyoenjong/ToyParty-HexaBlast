@@ -6,6 +6,7 @@ public class UI_Lobby : MonoBehaviour
 
     private void Start()
     {
+        Application.targetFrameRate = 60;
         uI_Stage_Main.Initialized();
     }
 }
