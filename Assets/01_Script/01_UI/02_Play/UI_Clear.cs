@@ -48,7 +48,7 @@ public class UI_Clear : MonoBehaviour
         T_Scuess_Level.text = string.Format(str_Level, StageManager.Get_Stage_Data().StageNum.ToString());
 
         //남은 이동횟수 점수로 치환
-        var movecountpoint = ClearManager.instance.Get_Move_Count() * 1000;
+        var movecountpoint = ClearManager.instance.Get_Move_Count() * 3000;
         ScoreManager.instance.Update_Score(movecountpoint);
         //점수 표시
         T_Sucess_Score.text = ScoreManager.instance.GetScore().ToString();

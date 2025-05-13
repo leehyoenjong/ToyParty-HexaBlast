@@ -167,6 +167,9 @@ public class TileManager : MonoBehaviour
                 //파괴되는 slot 타일 근처에 E_Tile_Kind.Huddle 타입의 타일이 있을 경우 Set_Crush함수 호출
                 //단, 매칭되는 group 하나당 한번만 호출임
                 Set_Huddle_Tile_Active(group);
+
+                //한번에 한 그룹씩만 처리하기 위한 break
+                break;
             }
         }
         // 삭제
