@@ -13,6 +13,7 @@ public class ClearManager : MonoBehaviour
 
     int Cur_Move_Count;
     int Cur_Claer_Count;
+    public int Get_Move_Count() => Cur_Move_Count;
 
     private void Awake()
     {
