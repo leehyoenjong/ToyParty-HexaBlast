@@ -4914,6 +4914,7 @@ GameObject:
   - component: {fileID: 1384873848}
   - component: {fileID: 1384873849}
   - component: {fileID: 1384873850}
+  - component: {fileID: 1384873851}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -5013,6 +5014,25 @@ MonoBehaviour:
   - {r: 0.75, g: 0.75, b: 0.75, a: 1}
   - {r: 1, g: 0.84, b: 0, a: 1}
   Default_Medal_Color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+--- !u!114 &1384873851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1384873844}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 262ea368db68c934a93af7afcd4a8138, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  L_Special_Tile:
+  - DestoryCount: 4
+    DestoryType: 1
+    G_Tile: {fileID: 4888945383822184511, guid: 0aba82cdd1460bf42b708f4ccd2ce9c8, type: 3}
+  - DestoryCount: 4
+    DestoryType: 2
+    G_Tile: {fileID: 472325870514550609, guid: 67f7a155f419c8244a112d60a05c0331, type: 3}
 --- !u!1 &1386325202
 GameObject:
   m_ObjectHideFlags: 0

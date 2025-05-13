@@ -142,15 +142,14 @@ public class TileManager : MonoBehaviour
     /// <summary>
     /// 전체 슬롯에 담겨있는 타일이랑 같은 타일들이 나열되어 있는지 체크 (직선 연속만 인정)
     /// </summary>
-    public bool All_Scan_Boom(UI_Tile[] tiles = null)
+    public HashSet<UI_Tile_Slot> All_Scan_Remove()
     {
         HashSet<UI_Tile_Slot> hs_remove_tile = new HashSet<UI_Tile_Slot>();
-        HashSet<UI_Tile_Slot> hs_match_tile = new HashSet<UI_Tile_Slot>();
 
         foreach (var item in L_Tile_Slot)
         {
             // 이미 처리된 슬롯이거나 타일이 없는 슬롯은 건너뜀
-            if (item.GetTile == null || hs_match_tile.Contains(item))
+            if (item.GetTile == null || hs_remove_tile.Contains(item))
             {
                 continue;
             }
@@ -161,7 +160,6 @@ public class TileManager : MonoBehaviour
                 foreach (var slot in group)
                 {
                     hs_remove_tile.Add(slot);
-                    hs_match_tile.Add(slot); // 이미 매치된 슬롯으로 표시
                 }
 
                 //파괴되는 slot 타일 근처에 E_Tile_Kind.Huddle 타입의 타일이 있을 경우 Set_Crush함수 호출
@@ -172,17 +170,43 @@ public class TileManager : MonoBehaviour
                 break;
             }
         }
+
         // 삭제
-        bool isremove = false;
-        bool isdestory = hs_remove_tile.Count > 0;
         ScoreManager.instance.Update_Score(hs_remove_tile.Count);
         foreach (var slot in hs_remove_tile)
         {
             slot.RemoveTile();
-            isremove = Check_TargetSlot(tiles, slot, isremove);
         }
         ClearManager.instance.Update_Clear_Count();
-        return tiles == null || tiles.Length <= 0 ? isdestory : isremove;
+
+        return hs_remove_tile;
+    }
+
+    /// <summary>
+    /// 특별한 타일 생성
+    /// </summary>
+    bool Create_Special_Tile(HashSet<UI_Tile_Slot> removeslot, UI_Tile_Slot firsttile)
+    {
+        //4개 이상 삭제하는지 체크
+        if (removeslot.Count <= 3)
+        {
+            return false;
+        }
+
+        //삭제 갯수와 삭제 종류를 이용해 특수 타일 불러오기
+        var destorycount = removeslot.Count;
+        var destorytypes = SpecialManager.instance.Get_Destory_Types(removeslot);
+        var specialtile = SpecialManager.instance.Get_Spceical_Type(destorycount, destorytypes);
+
+        if (specialtile == null)
+        {
+            return false;
+        }
+
+        //두번째 선택한 타일이 있을 경으 그 위치로 아니라면 removeslot의 마지막 위치로
+        var parent_slot = firsttile != null ? firsttile : removeslot.Last();
+        PlayManager.instance.Get_UI_Grid().Create_Tile(parent_slot, specialtile);
+        return true;
     }
 
     /// <summary>
@@ -222,32 +246,6 @@ public class TileManager : MonoBehaviour
             }
         }
     }
-
-    /// <summary>
-    /// 지정한 타일이 삭제목록에 있는지 체크
-    /// </summary>
-    bool Check_TargetSlot(UI_Tile[] tiles, UI_Tile_Slot slot, bool istargets)
-    {
-        if (tiles == null || tiles.Length == 0)
-        {
-            return istargets;
-        }
-
-        foreach (var tile in tiles)
-        {
-            if (tile == null)
-            {
-                continue;
-            }
-
-            if (tile.Get_Tile_Slot == slot)
-            {
-                istargets = true;
-            }
-        }
-        return istargets;
-    }
-
 
     /// <summary>
     /// 수직 방향(위에서 아래로) 타일 이동
@@ -457,9 +455,18 @@ public class TileManager : MonoBehaviour
         var first = FirstTouch_Tile;
         var second = SecondTouch_Tile;
 
-        var isboom = All_Scan_Boom(new UI_Tile[] { first, second });
+        //삭제처리
+        var removelist = All_Scan_Remove();
+
+        //특수 블록 생성
+        var create_special = Create_Special_Tile(removelist, firstslot);
+        if (create_special)
+        {
+            yield return StartCoroutine(IE_Wait_For_Tile_Animations());
+            yield return new WaitForSeconds(0.05f);
+        }
         Reset();
-        if (!isboom)
+        if (removelist.Count <= 0)
         {
             yield return new WaitForEndOfFrame();
             Debug.Log("위치 원상복구");
@@ -591,10 +598,20 @@ public class TileManager : MonoBehaviour
 
             ismove = anyMovement;
             //삭제
-            var isboom = All_Scan_Boom();
+            var removelist = All_Scan_Remove();
+
+            //특수블록 생성
+            var create_special = Create_Special_Tile(removelist, null);
+
+            //생서했다면 딜레이
+            if (create_special)
+            {
+                yield return StartCoroutine(IE_Wait_For_Tile_Animations());
+                yield return new WaitForSeconds(0.05f);
+            }
 
             //생성 삭제 이동 아무것도 없다면 종료
-            if (!ismove && !iscraete && !isboom)
+            if (!ismove && !iscraete && removelist.Count <= 0)
             {
                 break;
             }

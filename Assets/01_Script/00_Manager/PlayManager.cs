@@ -40,7 +40,7 @@ public class PlayManager : MonoBehaviour
         isStay = true;
         Ui_Grid.Create_Tile_Slot();
         yield return new WaitForSeconds(1f);
-        TileManager.instance.All_Scan_Boom();
+        TileManager.instance.All_Scan_Remove();
         StartCoroutine(TileManager.instance.IE_Move_And_Boom());
     }
 }

@@ -73,7 +73,7 @@ public class UI_Grid : MonoBehaviour
 
                     //타일 생성
                     var g_tile = directtile[idx].G_Tile;
-                    CreateTile(slot, g_tile);
+                    Create_Tile(slot, g_tile);
                 }
             }
         }
@@ -114,14 +114,14 @@ public class UI_Grid : MonoBehaviour
             }
 
             //기본 타일 랜덤생성
-            CreateTile(item, TileManager.instance.Get_Tile_Basic_Random_Start());
+            Create_Tile(item, TileManager.instance.Get_Tile_Basic_Random_Start());
         }
     }
 
     /// <summary>
     /// 타일 생성 
     /// </summary>
-    void CreateTile(UI_Tile_Slot slot, GameObject g_Tile)
+    public void Create_Tile(UI_Tile_Slot slot, GameObject g_Tile)
     {
         //타일 생성
         var tile = Instantiate(g_Tile, slot.GetRect).GetComponent<UI_Tile>();
@@ -157,7 +157,7 @@ public class UI_Grid : MonoBehaviour
             }
 
             //기본 타일 랜덤생성
-            CreateTile(hightslot[CreateIDX], TileManager.instance.Get_Tile_Basic_Random());
+            Create_Tile(hightslot[CreateIDX], TileManager.instance.Get_Tile_Basic_Random());
             CreateIDX++;
             return true;
         }

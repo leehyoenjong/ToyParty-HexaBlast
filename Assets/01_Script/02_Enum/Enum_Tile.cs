@@ -13,3 +13,11 @@ public enum E_Tile_Kind
     Huddle,
     Special
 }
+
+public enum E_Tile_Destory_Type
+{
+    NONE,
+    Beeline,
+    Diagonal,
+
+}
