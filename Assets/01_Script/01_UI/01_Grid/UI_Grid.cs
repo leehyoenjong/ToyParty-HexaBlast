@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
 public class UI_Grid : MonoBehaviour
@@ -9,6 +11,8 @@ public class UI_Grid : MonoBehaviour
 
     [Header("프리팹")]
     [SerializeField] GameObject G_Tile_Slot;
+
+    int CreateIDX = 0;
 
     /// <summary>
     /// 타일 슬롯 생성
@@ -74,6 +78,18 @@ public class UI_Grid : MonoBehaviour
             }
         }
 
+        //높이가 제일 높은 슬롯정보 담기
+        var slots = TileManager.instance.Get_Tile_Slot;
+        if (slots.Count > 0)
+        {
+            float maxY = slots.Max(x => x.GetRect.anchoredPosition.y);
+            var hightslot = slots.Where(x => Mathf.Approximately(x.GetRect.anchoredPosition.y, maxY));
+            foreach (var item in hightslot)
+            {
+                TileManager.instance.Get_Hight_Point.Add(item);
+            }
+        }
+
         //타일 생성
         Create_Tile_List();
     }
@@ -121,7 +137,7 @@ public class UI_Grid : MonoBehaviour
     public bool Create_None_Slot_Tile()
     {
         var tileslot = TileManager.instance.Get_Tile_Slot;
-        int clreatcount = 0;
+        var hightslot = TileManager.instance.Get_Hight_Point;
 
         var max = tileslot.Count;
         for (int i = 0; i < max; i++)
@@ -130,12 +146,22 @@ public class UI_Grid : MonoBehaviour
             {
                 continue;
             }
+            if (CreateIDX >= hightslot.Count)
+            {
+                CreateIDX = 0;
+            }
+
+            if (hightslot[CreateIDX].GetTile != null)
+            {
+                return true;
+            }
 
             //기본 타일 랜덤생성
-            CreateTile(tileslot[i], TileManager.instance.Get_Tile_Basic_Random());
-            clreatcount++;
+            CreateTile(hightslot[CreateIDX], TileManager.instance.Get_Tile_Basic_Random());
+            CreateIDX++;
+            return true;
         }
 
-        return clreatcount > 0;
+        return false;
     }
 }

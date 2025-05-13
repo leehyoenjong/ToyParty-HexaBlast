@@ -12,6 +12,9 @@ public class TileManager : MonoBehaviour
     List<UI_Tile_Slot> L_Tile_Slot = new List<UI_Tile_Slot>();
     public List<UI_Tile_Slot> Get_Tile_Slot => L_Tile_Slot;
 
+    List<UI_Tile_Slot> L_Tile_Slot_Hight = new List<UI_Tile_Slot>();
+    public List<UI_Tile_Slot> Get_Hight_Point => L_Tile_Slot_Hight;
+
     //타일 리스트
     List<UI_Tile> L_Tile = new List<UI_Tile>();
     public List<UI_Tile> Get_Tile => L_Tile;
@@ -168,6 +171,7 @@ public class TileManager : MonoBehaviour
         }
         // 삭제
         bool isremove = false;
+        bool isdestory = hs_remove_tile.Count > 0;
         ScoreManager.instance.Update_Score(hs_remove_tile.Count);
         foreach (var slot in hs_remove_tile)
         {
@@ -175,7 +179,7 @@ public class TileManager : MonoBehaviour
             isremove = Check_TargetSlot(tiles, slot, isremove);
         }
         ClearManager.instance.Update_Clear_Count();
-        return isremove;
+        return tiles == null || tiles.Length <= 0 ? isdestory : isremove;
     }
 
     /// <summary>
@@ -241,37 +245,6 @@ public class TileManager : MonoBehaviour
         return istargets;
     }
 
-
-    /// <summary>
-    /// 매치 성공 후 빈자리로 타일 이동
-    /// </summary>
-    public bool All_Scan_Move()
-    {
-        bool anyMovement = false;
-
-        // 1. 모든 수직 이동 처리
-        bool verticalMoved = Set_Move_All_Down();
-        if (verticalMoved)
-        {
-            anyMovement = true;
-        }
-
-        // 2. 모든 오른쪽 대각선 이동 처리
-        bool diagonalRightMoved = Set_All_Right_Moves();
-        if (diagonalRightMoved)
-        {
-            anyMovement = true;
-        }
-
-        // 3. 모든 왼쪽 대각선 이동 처리
-        bool diagonalLeftMoved = Set_All_Left_Moves();
-        if (diagonalLeftMoved)
-        {
-            anyMovement = true;
-        }
-
-        return anyMovement;
-    }
 
     /// <summary>
     /// 수직 방향(위에서 아래로) 타일 이동
@@ -521,9 +494,13 @@ public class TileManager : MonoBehaviour
         // 최소 딜레이로 설정
         var shortWait = new WaitForEndOfFrame();
 
+
         //이동, 생성, 삭제
         while (true)
         {
+            bool ismove = false;
+            var iscraete = false;
+
             //이동
             yield return shortWait;
 
@@ -559,7 +536,7 @@ public class TileManager : MonoBehaviour
 
             // 모든 이동 종류 재시도 - 대각선 이동 후 수직 이동이 가능할 수 있음
             bool additionalMoves = false;
-            do
+            while (true)
             {
                 additionalMoves = false;
 
@@ -595,20 +572,21 @@ public class TileManager : MonoBehaviour
                         }
                     }
                 }
-            } while (additionalMoves);
+                // 모든 이동이 확실히 완료된 후에 생성 단계 진행
+                yield return new WaitForSeconds(0.05f);
 
-            bool ismove = anyMovement;
+                //생성
+                iscraete = PlayManager.instance.Get_UI_Grid().Create_None_Slot_Tile();
+                // 새로 생성된 타일의 애니메이션이 완료될 때까지 대기
+                yield return StartCoroutine(IE_Wait_For_Tile_Animations());
+                yield return new WaitForSeconds(0.05f);
+                if (!iscraete && !additionalMoves)
+                {
+                    break;
+                }
+            }
 
-            // 모든 이동이 확실히 완료된 후에 생성 단계 진행
-            yield return new WaitForSeconds(0.05f);
-
-            //생성
-            var iscraete = PlayManager.instance.Get_UI_Grid().Create_None_Slot_Tile();
-
-            // 새로 생성된 타일의 애니메이션이 완료될 때까지 대기
-            yield return StartCoroutine(IE_Wait_For_Tile_Animations());
-            yield return new WaitForSeconds(0.05f);
-
+            ismove = anyMovement;
             //삭제
             var isboom = All_Scan_Boom();
 
@@ -788,8 +766,7 @@ public class TileManager : MonoBehaviour
 
                 // 오른쪽 위(대각선) 타일 찾기
                 var topRightSlot = L_Tile_Slot
-                    .Where(s =>
-                        s.GetPoint.Item1 == emptySlot.GetPoint.Item1 + 1f &&
+                    .Where(s => s.GetPoint.Item1 == emptySlot.GetPoint.Item1 + 1f &&
                         Mathf.Approximately(s.GetPoint.Item2, emptySlot.GetPoint.Item2 + 0.5f) &&
                         s.GetTile != null)
                     .FirstOrDefault();
