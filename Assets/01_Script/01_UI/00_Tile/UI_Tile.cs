@@ -89,7 +89,6 @@ public class UI_Tile : MonoBehaviour
             }
         }
 
-        var b_moveing = false;
         //최종 도착지
         Rt_Rect.DOMove(result_slot.GetRect.position, F_Move_Duration)
             .SetEase(Ease.OutQuad)
@@ -97,13 +96,7 @@ public class UI_Tile : MonoBehaviour
             .OnComplete(() =>
             {
                 Rt_Rect.localPosition = result_slot.GetPos;
-                b_moveing = true;
             });
-
-        while (!b_moveing)
-        {
-            yield return null;
-        }
     }
 
     public IEnumerator Move_Tile(UI_Tile_Slot result_slot)
@@ -118,6 +111,7 @@ public class UI_Tile : MonoBehaviour
         .OnComplete(() =>
         {
             Rt_Rect.localPosition = result_slot.GetPos;
+            b_moving = true;
         });
 
         while (!b_moving)

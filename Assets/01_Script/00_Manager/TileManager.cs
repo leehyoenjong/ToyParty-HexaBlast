@@ -367,7 +367,7 @@ public class TileManager : MonoBehaviour
         var removelist = All_Scan_Remove();
 
         //특수 블록 생성
-        Create_Special_Tile(removelist, firstslot);
+        Create_Special_Tile(removelist, secondslot);
 
 
         //삭제가 되지 않았으면 매칭이 되지 않은 것이기 때문에 원위치 
