@@ -75,8 +75,8 @@ public class TileManager : MonoBehaviour
             return result;
         }
 
-        // Basic 타입의 타일만 체크
-        if (start.GetTile.Get_Tile_Kind() != E_Tile_Kind.Basic)
+        // 장애물은 패스
+        if (start.GetTile.Get_Tile_Kind() == E_Tile_Kind.Huddle)
         {
             return result;
         }
@@ -148,7 +148,7 @@ public class TileManager : MonoBehaviour
     /// <summary>
     /// 전체 슬롯에 담겨있는 타일이랑 같은 타일들이 나열되어 있는지 체크 (직선 연속만 인정)
     /// </summary>
-    public HashSet<UI_Tile_Slot> All_Scan_Remove()
+    public (HashSet<UI_Tile_Slot>, E_Tile_Color) All_Scan_Remove()
     {
         HashSet<UI_Tile_Slot> hs_remove_tile = new HashSet<UI_Tile_Slot>();
 
@@ -178,20 +178,26 @@ public class TileManager : MonoBehaviour
         }
 
         // 삭제
+        var destorycolor = E_Tile_Color.None;
         ScoreManager.instance.Update_Score(hs_remove_tile.Count);
         foreach (var slot in hs_remove_tile)
         {
+            if (slot.GetTile == null)
+            {
+                continue;
+            }
+            destorycolor = slot.GetTile.Get_Tile_Color();
             slot.RemoveTile();
         }
         ClearManager.instance.Update_Clear_Count();
 
-        return hs_remove_tile;
+        return (hs_remove_tile, destorycolor);
     }
 
     /// <summary>
     /// 특별한 타일 생성
     /// </summary>
-    bool Create_Special_Tile(HashSet<UI_Tile_Slot> removeslot, UI_Tile_Slot firsttile)
+    bool Create_Special_Tile(HashSet<UI_Tile_Slot> removeslot, UI_Tile_Slot firsttile, E_Tile_Color createcolor)
     {
         //4개 이상 삭제하는지 체크
         if (removeslot.Count <= 3)
@@ -211,7 +217,8 @@ public class TileManager : MonoBehaviour
 
         //두번째 선택한 타일이 있을 경으 그 위치로 아니라면 removeslot의 마지막 위치로
         var parent_slot = firsttile != null ? firsttile : removeslot.Last();
-        PlayManager.instance.Get_UI_Grid().Create_Tile(parent_slot, specialtile);
+        var tile = PlayManager.instance.Get_UI_Grid().Create_Tile(parent_slot, specialtile);
+        tile.Set_Tile_Color(createcolor);
         return true;
     }
 
@@ -364,14 +371,13 @@ public class TileManager : MonoBehaviour
         yield return this.WaitForAll(firsttile.Move_Tile(secondslot), secondtile.Move_Tile(firstslot));
 
         //삭제처리
-        var removelist = All_Scan_Remove();
+        var remove_result = All_Scan_Remove();
 
         //특수 블록 생성
-        Create_Special_Tile(removelist, secondslot);
-
+        Create_Special_Tile(remove_result.Item1, secondslot, remove_result.Item2);
 
         //삭제가 되지 않았으면 매칭이 되지 않은 것이기 때문에 원위치 
-        if (removelist.Count <= 0)
+        if (remove_result.Item1.Count <= 0)
         {
             yield return Wait_Five;
             //원상복구
@@ -409,10 +415,10 @@ public class TileManager : MonoBehaviour
         while (true)
         {
             //삭제
-            var removelist = All_Scan_Remove();
+            var result_remove_list = All_Scan_Remove();
 
             //특수블록 생성
-            Create_Special_Tile(removelist, null);
+            Create_Special_Tile(result_remove_list.Item1, null, result_remove_list.Item2);
 
             // 최소 딜레이로 설정
             yield return Wait_End;
@@ -423,7 +429,7 @@ public class TileManager : MonoBehaviour
             yield return StartCoroutine(Set_All_Move_Tile(checkcraete));
 
             //파괴한 타일과 생성한 타일이 없다면 종료
-            if (removelist.Count <= 0 && createcount <= 0)
+            if (result_remove_list.Item1.Count <= 0 && createcount <= 0)
             {
                 break;
             }

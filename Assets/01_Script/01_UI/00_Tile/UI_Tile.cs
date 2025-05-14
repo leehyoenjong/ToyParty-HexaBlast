@@ -13,8 +13,10 @@ public class UI_Tile : MonoBehaviour
     [Header("타일 정보")]
     [SerializeField] E_Tile_Color En_Tile_Color;
     [SerializeField] E_Tile_Kind En_Tile_Kind;
+    [SerializeField] E_Tile_Destory_Type En_Tile_Destory_Type = E_Tile_Destory_Type.NONE;
 
     [Header("UI")]
+    [SerializeField] protected Image Img_ICON;
     [SerializeField] RectTransform Rt_Rect;
     [SerializeField] EventTrigger Et_EventTrigger;
 
@@ -27,9 +29,13 @@ public class UI_Tile : MonoBehaviour
 
     //색
     public E_Tile_Color Get_Tile_Color() => En_Tile_Color;
+    public virtual E_Tile_Color Set_Tile_Color(E_Tile_Color color) => En_Tile_Color = color;
 
     //종류
     public E_Tile_Kind Get_Tile_Kind() => En_Tile_Kind;
+
+    //삭제 종류
+    public E_Tile_Destory_Type Get_Tile_Destory_Type() => En_Tile_Destory_Type;
 
     public void Initailzed(UI_Tile_Slot slot)
     {
@@ -163,6 +169,11 @@ public class UI_Tile : MonoBehaviour
     public virtual void RemoveTile(UI_Tile removetile)
     {
         TileManager.instance.Destory_Tile_Count(this);
+
+        if (this == null || this.gameObject == null)
+        {
+            return;
+        }
         Destroy(this.gameObject);
     }
 

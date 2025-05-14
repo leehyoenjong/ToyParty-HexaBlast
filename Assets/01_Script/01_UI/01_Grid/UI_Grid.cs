@@ -122,7 +122,7 @@ public class UI_Grid : MonoBehaviour
     /// <summary>
     /// 타일 생성 
     /// </summary>
-    public void Create_Tile(UI_Tile_Slot slot, GameObject g_Tile)
+    public UI_Tile Create_Tile(UI_Tile_Slot slot, GameObject g_Tile)
     {
         //타일 생성
         var tile = Instantiate(g_Tile, Tr_Grid_Tile).GetComponent<UI_Tile>();
@@ -130,6 +130,7 @@ public class UI_Grid : MonoBehaviour
 
         tile.Initailzed(slot);
         slot.SetTile(tile);
+        return tile;
     }
 
     /// <summary>

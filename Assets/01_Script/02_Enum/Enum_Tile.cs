@@ -18,6 +18,7 @@ public enum E_Tile_Destory_Type
 {
     NONE,
     Beeline,
-    Diagonal,
+    Diagonal_Right,
+    Diagonal_Left,
 
 }

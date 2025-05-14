@@ -42,7 +42,7 @@ public class SpecialManager : MonoBehaviour
             return E_Tile_Destory_Type.Beeline;
         }
 
-        return E_Tile_Destory_Type.Diagonal;
+        return E_Tile_Destory_Type.Diagonal_Right;
     }
 }
 
