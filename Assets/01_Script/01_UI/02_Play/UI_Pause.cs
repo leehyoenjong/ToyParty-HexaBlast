@@ -19,7 +19,6 @@ public class UI_Pause : MonoBehaviour
     /// </summary>
     public void Btn_Continue()
     {
-        Time.timeScale = 1;
         Destroy(this.gameObject);
     }
 
@@ -44,5 +43,10 @@ public class UI_Pause : MonoBehaviour
         var on = G_Hint[0].activeSelf;
         G_Hint[0].SetActive(!on);
         G_Hint[1].SetActive(on);
+    }
+
+    void OnDestroy()
+    {
+        Time.timeScale = 1;
     }
 }
