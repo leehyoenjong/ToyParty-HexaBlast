@@ -2,6 +2,10 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using DG.Tweening;
+using System.Collections.Generic;
+using NUnit.Framework.Constraints;
+using System.Collections;
+using JetBrains.Annotations;
 
 public class UI_Tile : MonoBehaviour
 {
@@ -28,13 +32,9 @@ public class UI_Tile : MonoBehaviour
     bool b_Is_Moving = false;
     Tween Tw_Move;
 
-    // 애니메이션 중 임시 저장 변수
-    Transform Tr_Original_Parent;
-    Vector3 Vc_Original_LocalPosition;
-    Vector3 Vc_Target_World_Position;
-
     public void Initailzed(UI_Tile_Slot slot)
     {
+        Rt_Rect.anchoredPosition = slot.GetRect.anchoredPosition;
         Ui_Tile_Slot = slot;
         SetupEventTrigger();
     }
@@ -52,91 +52,77 @@ public class UI_Tile : MonoBehaviour
     /// <param name="slot">이동할 타일 슬롯</param>
     /// <param name="withAnimation">애니메이션 적용 여부 (기본값: true)</param>
     /// <param name="isDiagonal">대각선 이동 여부 (기본값: false)</param>
-    public void Set_Swap(UI_Tile_Slot slot, bool withAnimation = true, bool isDiagonal = false)
+    public void Set_Swap(UI_Tile tile)
     {
-        // 이동 중이면 중복 호출 방지
-        if (b_Is_Moving)
-        {
-            return;
-        }
+        var tempslot = Ui_Tile_Slot;
 
-        // 이미 실행 중인 애니메이션이 있다면 중지
-        if (Tw_Move != null && Tw_Move.IsActive())
-        {
-            Tw_Move.Kill(false); // 현재 값으로 중지
-        }
+        //슬롯 위치 변경
+        Set_Tile_Slot(tile == null ? null : tile.Get_Tile_Slot);
+        tile.Set_Tile_Slot(tempslot);
 
-        // 슬롯에 타일 연결 (항상 즉시 설정)
+        //적용 타일 변경 
+        tile.Get_Tile_Slot.SetTile(tile);
+        Get_Tile_Slot.SetTile(this);
+    }
+
+    public void Set_Tile_Slot(UI_Tile_Slot slot)
+    {
         Ui_Tile_Slot = slot;
-        slot.SetTile(this);
+    }
 
-        // 애니메이션을 사용하지 않는 경우 즉시 이동
-        if (!withAnimation)
-        {
-            Rt_Rect.SetParent(slot.GetRect);
-            Rt_Rect.localPosition = Vector3.zero;
-            return;
-        }
-
-        // 현재 월드 위치와 목표 슬롯의 월드 위치 계산
-        Vector3 currentWorldPos = Rt_Rect.position;
-        Vc_Target_World_Position = slot.GetRect.position;
-
-        // 이동 거리가 너무 작으면 즉시 이동 (작은 조정은 애니메이션 없이)
-        float distance = Vector3.Distance(currentWorldPos, Vc_Target_World_Position);
-        if (distance < F_Min_Move_Distance)
-        {
-            Rt_Rect.SetParent(slot.GetRect);
-            Rt_Rect.localPosition = Vector3.zero;
-            return;
-        }
-
-        // 임시 저장: 원래 부모와 로컬 위치
-        Tr_Original_Parent = Rt_Rect.parent;
-        Vc_Original_LocalPosition = Rt_Rect.localPosition;
-
-        // 이동 시간 계산
-        // 대각선 이동일 경우 더 빠르게 처리
-        float duration = isDiagonal
-            ? F_Move_Duration * 0.35f  // 대각선 이동 속도를 2배 더 빠르게 (0.7f → 0.35f)
-            : F_Move_Duration;
-
-        // 애니메이션 시작 전 상태 설정
-        b_Is_Moving = true;
-
+    /// <summary>
+    /// 타일 이동함수 
+    /// </summary>
+    public IEnumerator Move_Tile(List<UI_Tile_Slot> movelist, UI_Tile_Slot result_slot)
+    {
         // 타일을 최상위 캔버스의 자식으로 이동 (가시성 확보)
-        Rt_Rect.SetParent(PlayManager.instance.GetUI_Play().GetCanvas().transform, true); // 월드 위치 유지
-        Rt_Rect.SetAsLastSibling(); // 가장 위에 표시
+        b_Is_Moving = false;
 
-        // 대각선 이동을 위한 이징 설정
-        Ease easeToUse = isDiagonal ? Ease.OutQuad : E_Move_Ease;
+        foreach (var item in movelist)
+        {
+            var move = false;
+            // DOTween 애니메이션 시작 (월드 좌표로 이동)
+            Rt_Rect.DOMove(item.GetRect.position, F_Move_Duration)
+                .SetEase(Ease.OutQuad)
+                .SetUpdate(true) // UpdateType.Normal로 설정하여 Time.timeScale 영향받지 않도록
+                .OnComplete(() =>
+                {
+                    // 상태 초기화
+                    Rt_Rect.localPosition = item.GetPos;
+                    move = true;
+                });
 
-        // DOTween 애니메이션 시작 (월드 좌표로 이동)
-        Tw_Move = Rt_Rect.DOMove(Vc_Target_World_Position, duration)
-            .SetEase(easeToUse)
+            yield return new WaitUntil(() => move);
+        }
+
+
+        //최종 도착지
+        Rt_Rect.DOMove(result_slot.GetRect.position, F_Move_Duration)
+            .SetEase(Ease.OutQuad)
             .SetUpdate(true) // UpdateType.Normal로 설정하여 Time.timeScale 영향받지 않도록
             .OnComplete(() =>
             {
-                try
-                {
-                    // 애니메이션 완료 후 최종 위치로 설정
-                    if (slot != null && slot.GetRect != null)
-                    {
-                        Rt_Rect.SetParent(slot.GetRect);
-                        Rt_Rect.localPosition = Vector3.zero;
-                    }
-                }
-                catch (System.Exception ex)
-                {
-                    Debug.LogError($"타일 애니메이션 완료 오류: {ex.Message}");
-                }
-                finally
-                {
-                    // 상태 초기화
-                    b_Is_Moving = false;
-                    Tw_Move = null;
-                }
+                Rt_Rect.localPosition = result_slot.GetPos;
+                b_Is_Moving = true;
             });
+    }
+
+    public IEnumerator Move_Tile(UI_Tile_Slot result_slot)
+    {
+        // 타일을 최상위 캔버스의 자식으로 이동 (가시성 확보)
+        b_Is_Moving = false;
+
+        //최종 도착지
+        Tw_Move = Rt_Rect.DOMove(result_slot.GetRect.position, F_Move_Duration)
+            .SetEase(Ease.OutQuad)
+            .SetUpdate(true)
+            .OnComplete(() =>
+            {
+                Rt_Rect.localPosition = result_slot.GetPos;
+                b_Is_Moving = true;
+            });
+
+        yield return new WaitUntil(() => b_Is_Moving);
     }
 
 
