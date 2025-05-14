@@ -1,22 +1,21 @@
 using System.Collections.Generic;
 using System.Linq;
-using Unity.Mathematics;
 using UnityEngine;
 
-public class UI_Tile_Line : UI_Tile
+public class UI_Tile_Diagonal : UI_Tile
 {
     public override void Set_Tile_Destory_Type(HashSet<UI_Tile_Slot> value)
     {
         base.Set_Tile_Destory_Type(value);
-        if (Get_Tile_Destory_Type == E_Tile_Destory_Type.Beeline_UpDown)
-        {
-            return;
-        }
 
-        //대각선 처리라면?
+        //키 값 작은 순서대로 정렬
         var list = value.OrderBy(x => x.GetPoint.Item1).ToList();
+
+        //중간 두개의 값들을 가져와
         var left = list[1].GetPoint.Item2;
         var right = list[2].GetPoint.Item2;
+
+        //왼쪽게 더 크면 왼쪽 대각선, 오른쪽이 더 크면 오른쪽 대각선
         Get_Tile_Destory_Type = left > right ? E_Tile_Destory_Type.Diagonal_Left : E_Tile_Destory_Type.Diagonal_Right;
     }
 
@@ -44,18 +43,11 @@ public class UI_Tile_Line : UI_Tile
     public override void RemoveTile(UI_Tile removetile)
     {
         var pos = Get_Tile_Slot.GetPoint;
-
-        //y값이 작은 것 부터 정렬
         var slotlist = TileManager.instance.Get_Tile_Slot;
         var removelist = new List<UI_Tile_Slot>();
 
         switch (Get_Tile_Destory_Type)
         {
-            //수직 리스트 
-            case E_Tile_Destory_Type.Beeline_UpDown:
-                removelist.AddRange(slotlist.FindAll(x => x != Get_Tile_Slot && x.GetPoint.Item1 == pos.Item1));
-                break;
-
             //오른쪽 대각선 전체 리스트
             case E_Tile_Destory_Type.Diagonal_Right:
                 //딕셔너리 형태로 x.GetPoint.Item1이 key값, List<UI_Tile_Slot>를 value값으로 하되, value값은 x.GetPoint.Item2가 작은거부터 나열 

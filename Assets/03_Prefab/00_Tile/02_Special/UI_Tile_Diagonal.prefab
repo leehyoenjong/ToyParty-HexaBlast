@@ -103,14 +103,14 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 6351598088197818474, guid: f0109b407baf93a469059a16b997ef84, type: 3}
       insertIndex: -1
-      addedObject: {fileID: -8562568708673474431}
+      addedObject: {fileID: 2128630926394352157}
   m_SourcePrefab: {fileID: 100100000, guid: f0109b407baf93a469059a16b997ef84, type: 3}
 --- !u!1 &472325870514550609 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6351598088197818474, guid: f0109b407baf93a469059a16b997ef84, type: 3}
   m_PrefabInstance: {fileID: 6821652916838596411}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &-8562568708673474431
+--- !u!114 &2128630926394352157
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -119,12 +119,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 472325870514550609}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3de514b047d3304d85da35d7ce4a298, type: 3}
+  m_Script: {fileID: 11500000, guid: 03b4ec11f150fcd469799c3a143982f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   En_Tile_Color: 0
   En_Tile_Kind: 2
-  En_Tile_Destory_Type: 3
+  En_Tile_Destory_Type: 0
   Img_ICON: {fileID: 598490356673176033}
   Rt_Rect: {fileID: 4061611372497856508}
   Et_EventTrigger: {fileID: 2237143653852238028}

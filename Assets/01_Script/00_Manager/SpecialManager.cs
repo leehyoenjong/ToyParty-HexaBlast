@@ -39,7 +39,7 @@ public class SpecialManager : MonoBehaviour
 
         if (allSameX || allSameY)
         {
-            return E_Tile_Destory_Type.Beeline;
+            return E_Tile_Destory_Type.Beeline_UpDown;
         }
 
         return E_Tile_Destory_Type.Diagonal_Right;

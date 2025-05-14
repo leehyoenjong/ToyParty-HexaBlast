@@ -35,7 +35,12 @@ public class UI_Tile : MonoBehaviour
     public E_Tile_Kind Get_Tile_Kind() => En_Tile_Kind;
 
     //삭제 종류
-    public E_Tile_Destory_Type Get_Tile_Destory_Type() => En_Tile_Destory_Type;
+    public E_Tile_Destory_Type Get_Tile_Destory_Type
+    {
+        get => En_Tile_Destory_Type;
+        set => En_Tile_Destory_Type = value;
+    }
+    public virtual void Set_Tile_Destory_Type(HashSet<UI_Tile_Slot> value) { }
 
     public void Initailzed(UI_Tile_Slot slot)
     {

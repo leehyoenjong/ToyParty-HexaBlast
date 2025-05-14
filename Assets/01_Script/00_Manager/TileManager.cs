@@ -219,6 +219,7 @@ public class TileManager : MonoBehaviour
         var parent_slot = firsttile != null ? firsttile : removeslot.Last();
         var tile = PlayManager.instance.Get_UI_Grid().Create_Tile(parent_slot, specialtile);
         tile.Set_Tile_Color(createcolor);
+        tile.Set_Tile_Destory_Type(removeslot);
         return true;
     }
 
