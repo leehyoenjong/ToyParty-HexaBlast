@@ -177,6 +177,15 @@ public class TileManager : MonoBehaviour
             }
         }
 
+        //삭제여부 확인 
+        if (hs_remove_tile.Count <= 0)
+        {
+            return (hs_remove_tile, E_Tile_Color.None);
+        }
+
+        //힌트 강제종료
+        HintManager.instance.Set_Driect_Hint_Off();
+
         // 삭제
         var destorycolor = E_Tile_Color.None;
         ScoreManager.instance.Update_Score(hs_remove_tile.Count);
@@ -440,7 +449,7 @@ public class TileManager : MonoBehaviour
         while (true)
         {
             //파괴 가능한 타일 있는지 체크
-            var check = Check_Destory_Tile();
+            var check = Check_Destory_Tile() != null;
 
             //파괴 가능한 타일이 있다면 종료
             if (check)
@@ -461,13 +470,15 @@ public class TileManager : MonoBehaviour
     /// <summary>
     /// 파괴 가능 타일 체크
     /// </summary>
-    bool Check_Destory_Tile()
+    public HashSet<UI_Tile_Slot> Check_Destory_Tile()
     {
         // 모든 슬롯 위치 확인
         foreach (var slot in L_Tile_Slot)
         {
-            if (slot.GetTile == null)
+            if (slot.GetTile == null || slot.GetTile.Get_Tile_Kind() == E_Tile_Kind.Huddle)
+            {
                 continue;
+            }
 
             // 현재 타일 색상
             var currentColor = slot.GetTile.Get_Tile_Color();
@@ -513,13 +524,13 @@ public class TileManager : MonoBehaviour
 
                     if (hasMatch)
                     {
-                        return true;
+                        return group1.Count >= 3 ? group1 : group2;
                     }
                 }
             }
         }
 
-        return false;
+        return null;
     }
 
     /// <summary>

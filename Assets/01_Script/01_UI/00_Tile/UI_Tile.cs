@@ -19,6 +19,7 @@ public class UI_Tile : MonoBehaviour
     [SerializeField] protected Image Img_ICON;
     [SerializeField] RectTransform Rt_Rect;
     [SerializeField] EventTrigger Et_EventTrigger;
+    [SerializeField] GameObject G_Hint;
 
     [Header("애니메이션 설정")]
     [SerializeField] float F_Move_Duration = 0.15f;  // 이동 지속 시간 (0.025f에서 0.15f로 늘림)
@@ -189,4 +190,14 @@ public class UI_Tile : MonoBehaviour
     {
         return true;
     }
+
+    /// <summary>
+    /// 힌트 오브젝트 온오프 
+    /// </summary>
+    public void Set_Hint(bool ishint)
+    {
+        G_Hint.SetActive(ishint);
+    }
+
+    public bool Check_Hint() => G_Hint.activeSelf;
 }

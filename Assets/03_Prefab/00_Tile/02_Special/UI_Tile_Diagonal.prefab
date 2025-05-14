@@ -128,7 +128,13 @@ MonoBehaviour:
   Img_ICON: {fileID: 598490356673176033}
   Rt_Rect: {fileID: 4061611372497856508}
   Et_EventTrigger: {fileID: 2237143653852238028}
+  G_Hint: {fileID: 547717240855402020}
   F_Move_Duration: 0.15
+--- !u!1 &547717240855402020 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6427341192473667871, guid: f0109b407baf93a469059a16b997ef84, type: 3}
+  m_PrefabInstance: {fileID: 6821652916838596411}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &598490356673176033 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6261449209345187546, guid: f0109b407baf93a469059a16b997ef84, type: 3}

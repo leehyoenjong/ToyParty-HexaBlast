@@ -12,6 +12,10 @@ public class UI_Pause : MonoBehaviour
     {
         T_Level.text = string.Format("LEVEL {0}", StageManager.Get_Stage_Data().StageNum);
         Time.timeScale = 0;
+
+        var on = HintManager.Get_Hint_OnOff;
+        G_Hint[0].SetActive(on);
+        G_Hint[1].SetActive(!on);
     }
 
     /// <summary>
@@ -43,6 +47,14 @@ public class UI_Pause : MonoBehaviour
         var on = G_Hint[0].activeSelf;
         G_Hint[0].SetActive(!on);
         G_Hint[1].SetActive(on);
+
+        HintManager.Get_Hint_OnOff = !on;
+
+        //힌트 종료 시 강제로 켜진 힌트들 꺼버리기
+        if (on)
+        {
+            HintManager.instance.Set_Driect_Hint_Off();
+        }
     }
 
     void OnDestroy()

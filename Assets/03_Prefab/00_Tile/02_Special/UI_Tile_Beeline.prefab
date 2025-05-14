@@ -105,6 +105,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1990320024768303190}
   m_SourcePrefab: {fileID: 100100000, guid: f0109b407baf93a469059a16b997ef84, type: 3}
+--- !u!1 &4814046603565723978 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6427341192473667871, guid: f0109b407baf93a469059a16b997ef84, type: 3}
+  m_PrefabInstance: {fileID: 2016606732831496277}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4888945383822184511 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6351598088197818474, guid: f0109b407baf93a469059a16b997ef84, type: 3}
@@ -128,6 +133,7 @@ MonoBehaviour:
   Img_ICON: {fileID: 5555559310051673743}
   Rt_Rect: {fileID: 9010209764056301714}
   Et_EventTrigger: {fileID: 6511327926521116578}
+  G_Hint: {fileID: 4814046603565723978}
   F_Move_Duration: 0.15
 --- !u!114 &5555559310051673743 stripped
 MonoBehaviour:
