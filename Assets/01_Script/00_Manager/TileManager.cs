@@ -224,17 +224,17 @@ public class TileManager : MonoBehaviour
         // 처리할 Huddle 타일 찾기 - LINQ 활용
         var huddletile = L_Tile_Slot
             .Where(slot => slot.GetTile != null && slot.GetTile.Get_Tile_Kind() == E_Tile_Kind.Huddle)
-            .Select(slot => slot.GetTile as UI_Tile_Paengi)
+            .Select(slot => slot.GetTile)
             .Where(huddleTile => huddleTile != null)
             .ToList();
 
         // 이미 처리된 Huddle 타일을 추적하기 위한 집합
-        HashSet<UI_Tile_Paengi> hs_paengi = new HashSet<UI_Tile_Paengi>();
+        HashSet<UI_Tile> hs_tile = new HashSet<UI_Tile>();
 
         // 파괴될 타일 그룹에서 하나를 대표로 선택 (그룹 당 한 번만 처리하기 위해)
         foreach (var huddle in huddletile)
         {
-            if (hs_paengi.Contains(huddle))
+            if (hs_tile.Contains(huddle))
             {
                 continue;
             }
@@ -243,7 +243,7 @@ public class TileManager : MonoBehaviour
             var removetile = destroyGroup
                 .Select(slot => slot.GetTile)
                 .Where(tile => tile != null)
-                .FirstOrDefault(tile => huddle.Check_Cursh(tile));
+                .FirstOrDefault(tile => huddle.Check_Remove(tile));
 
             if (removetile == null)
             {
@@ -251,9 +251,9 @@ public class TileManager : MonoBehaviour
             }
 
             // Set_Crush 함수 호출 (파괴되는 타일 전달)
-            huddle.Set_Crush(removetile);
+            huddle.RemoveTile(removetile);
             // 처리된 타일로 표시
-            hs_paengi.Add(huddle);
+            hs_tile.Add(huddle);
         }
     }
 

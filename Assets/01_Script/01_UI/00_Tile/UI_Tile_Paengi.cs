@@ -8,13 +8,8 @@ public class UI_Tile_Paengi : UI_Tile
     /// <summary>
     /// 근처 파괴 시 발동
     /// </summary>
-    public void Set_Crush(UI_Tile removetile)
+    public override void RemoveTile(UI_Tile removetile)
     {
-        if (!Check_Cursh(removetile))
-        {
-            return;
-        }
-
         //횟수를 모두 소모하면 제거
         CrushCount--;
 
@@ -22,10 +17,13 @@ public class UI_Tile_Paengi : UI_Tile
         {
             return;
         }
-        RemoveTile();
+        base.RemoveTile(removetile);
     }
 
-    public bool Check_Cursh(UI_Tile removetile)
+    /// <summary>
+    /// 삭제해도 되는지 체크
+    /// </summary>
+    public override bool Check_Remove(UI_Tile removetile)
     {
         //removetile가 한칸위치에 있는 타일이라면 true 아니라면 false
         if (removetile == null || Get_Tile_Slot == null || removetile.Get_Tile_Slot == null)

@@ -43,7 +43,7 @@ public class UI_Tile_Slot : MonoBehaviour
     {
         if (Ui_Tile != null)
         {
-            Ui_Tile.RemoveTile();
+            Ui_Tile.RemoveTile(null);
             Ui_Tile = null;
         }
     }

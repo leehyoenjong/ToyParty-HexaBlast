@@ -21,14 +21,10 @@ public class UI_Tile : MonoBehaviour
     [Header("애니메이션 설정")]
     [SerializeField] float F_Move_Duration = 0.15f;  // 이동 지속 시간 (0.025f에서 0.15f로 늘림)
 
-    // 애니메이션 관련 변수
-    bool b_Is_Moving = false;
-    Tween Tw_Move;
-
     // 부모 슬롯
     UI_Tile_Slot Ui_Tile_Slot;
     public UI_Tile_Slot Get_Tile_Slot => Ui_Tile_Slot;
-    
+
     //색
     public E_Tile_Color Get_Tile_Color() => En_Tile_Color;
 
@@ -73,8 +69,6 @@ public class UI_Tile : MonoBehaviour
     public IEnumerator Move_Tile(List<UI_Tile_Slot> movelist, UI_Tile_Slot result_slot)
     {
         // 타일을 최상위 캔버스의 자식으로 이동 (가시성 확보)
-        b_Is_Moving = false;
-
         foreach (var item in movelist)
         {
             var move = false;
@@ -95,7 +89,7 @@ public class UI_Tile : MonoBehaviour
             }
         }
 
-
+        var b_moveing = false;
         //최종 도착지
         Rt_Rect.DOMove(result_slot.GetRect.position, F_Move_Duration)
             .SetEase(Ease.OutQuad)
@@ -103,48 +97,33 @@ public class UI_Tile : MonoBehaviour
             .OnComplete(() =>
             {
                 Rt_Rect.localPosition = result_slot.GetPos;
-                b_Is_Moving = true;
-            });
-    }
-
-    public IEnumerator Move_Tile(UI_Tile_Slot result_slot)
-    {
-        // 타일을 최상위 캔버스의 자식으로 이동 (가시성 확보)
-        b_Is_Moving = false;
-
-        //최종 도착지
-        Tw_Move = Rt_Rect.DOMove(result_slot.GetRect.position, F_Move_Duration)
-            .SetEase(Ease.OutQuad)
-            .SetUpdate(true)
-            .OnComplete(() =>
-            {
-                Rt_Rect.localPosition = result_slot.GetPos;
-                b_Is_Moving = true;
+                b_moveing = true;
             });
 
-        while (!b_Is_Moving)
+        while (!b_moveing)
         {
             yield return null;
         }
     }
 
-
-    /// <summary>
-    /// 타일이 이동 중인지 여부 확인
-    /// </summary>
-    public bool Check_Is_Moving()
+    public IEnumerator Move_Tile(UI_Tile_Slot result_slot)
     {
-        // DOTween 상태와 내부 플래그 모두 확인
-        bool isTweenActive = Tw_Move != null && Tw_Move.IsActive();
+        // 타일을 최상위 캔버스의 자식으로 이동 (가시성 확보)
+        var b_moving = false;
 
-        // 디버그 로그로 상태 확인
-        if (isTweenActive != b_Is_Moving)
+        //최종 도착지
+        Rt_Rect.DOMove(result_slot.GetRect.position, F_Move_Duration)
+        .SetEase(Ease.OutQuad)
+        .SetUpdate(true)
+        .OnComplete(() =>
         {
-            Debug.LogWarning($"{name}: 이동 상태 불일치 - 내부:{b_Is_Moving}, Tween:{isTweenActive}");
-            b_Is_Moving = isTweenActive; // 동기화
-        }
+            Rt_Rect.localPosition = result_slot.GetPos;
+        });
 
-        return b_Is_Moving;
+        while (!b_moving)
+        {
+            yield return null;
+        }
     }
 
     void SetupEventTrigger()
@@ -174,26 +153,12 @@ public class UI_Tile : MonoBehaviour
 
     void OnPointerDownDelegate(PointerEventData data)
     {
-        // 이동 중에는 터치를 무시
-        if (Check_Is_Moving())
-        {
-            Debug.Log($"{name}: 이동 중이라 터치 무시");
-            return;
-        }
-
         // 첫 번째 타일 선택
         TouchManasger.instance.OnTileDown(this);
     }
 
     void OnPointerEnterDelegate(PointerEventData data)
     {
-        // 이동 중에는 터치를 무시
-        if (Check_Is_Moving())
-        {
-            Debug.Log($"{name}: 이동 중이라 진입 무시");
-            return;
-        }
-
         // 드래그 중 타일 선택 (두 번째 타일)
         TouchManasger.instance.OnTileEnter(this);
     }
@@ -201,26 +166,17 @@ public class UI_Tile : MonoBehaviour
     /// <summary>
     /// 타일제거
     /// </summary>
-    public virtual void RemoveTile()
+    public virtual void RemoveTile(UI_Tile removetile)
     {
-        // 이미 실행 중인 애니메이션이 있다면 중지
-        if (Tw_Move != null && Tw_Move.IsActive())
-        {
-            Tw_Move.Kill(false);
-            Tw_Move = null;
-        }
-
         TileManager.instance.Destory_Tile_Count(this);
         Destroy(this.gameObject);
     }
 
-    void OnDestroy()
+    /// <summary>
+    /// 삭제해도 되는지 체크
+    /// </summary>
+    public virtual bool Check_Remove(UI_Tile removetile)
     {
-        // 게임 오브젝트가 제거될 때 모든 트윈 중지
-        if (Tw_Move != null && Tw_Move.IsActive())
-        {
-            Tw_Move.Kill(false);
-            Tw_Move = null;
-        }
+        return true;
     }
 }
