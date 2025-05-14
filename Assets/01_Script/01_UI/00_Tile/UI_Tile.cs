@@ -19,18 +19,21 @@ public class UI_Tile : MonoBehaviour
     [SerializeField] EventTrigger Et_EventTrigger;
 
     [Header("애니메이션 설정")]
-    [SerializeField] float F_Move_Speed = 30f;      // 이동 속도
-    [SerializeField] float F_Min_Move_Distance = 0.01f; // 최소 이동 거리
     [SerializeField] float F_Move_Duration = 0.15f;  // 이동 지속 시간 (0.025f에서 0.15f로 늘림)
-    [SerializeField] Ease E_Move_Ease = Ease.Linear; // 이동 이징 효과 (InOutSine에서 Linear로 변경)
-
-    // 부모 슬롯
-    UI_Tile_Slot Ui_Tile_Slot;
-    public UI_Tile_Slot Get_Tile_Slot => Ui_Tile_Slot;
 
     // 애니메이션 관련 변수
     bool b_Is_Moving = false;
     Tween Tw_Move;
+
+    // 부모 슬롯
+    UI_Tile_Slot Ui_Tile_Slot;
+    public UI_Tile_Slot Get_Tile_Slot => Ui_Tile_Slot;
+    
+    //색
+    public E_Tile_Color Get_Tile_Color() => En_Tile_Color;
+
+    //종류
+    public E_Tile_Kind Get_Tile_Kind() => En_Tile_Kind;
 
     public void Initailzed(UI_Tile_Slot slot)
     {
@@ -39,12 +42,6 @@ public class UI_Tile : MonoBehaviour
         SetupEventTrigger();
     }
 
-    /// <summary>
-    /// 종류 및 색깔 가져오기
-    /// </summary>
-    /// <returns></returns>
-    public E_Tile_Color Get_Tile_Color() => En_Tile_Color;
-    public E_Tile_Kind Get_Tile_Kind() => En_Tile_Kind;
 
     /// <summary>
     /// 부모위치 변경
@@ -92,7 +89,10 @@ public class UI_Tile : MonoBehaviour
                     move = true;
                 });
 
-            yield return new WaitUntil(() => move);
+            while (!move)
+            {
+                yield return null;
+            }
         }
 
 
@@ -122,7 +122,10 @@ public class UI_Tile : MonoBehaviour
                 b_Is_Moving = true;
             });
 
-        yield return new WaitUntil(() => b_Is_Moving);
+        while (!b_Is_Moving)
+        {
+            yield return null;
+        }
     }
 
 

@@ -26,8 +26,6 @@ public class PlayManager : MonoBehaviour
         instance = this;
     }
 
-
-
     private void Start()
     {
         StartCoroutine(IE_Play());

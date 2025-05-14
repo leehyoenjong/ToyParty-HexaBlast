@@ -21,6 +21,9 @@ public class TileManager : MonoBehaviour
     List<UI_Tile> L_Tile = new List<UI_Tile>();
     public List<UI_Tile> Get_Tile => L_Tile;
 
+    WaitForEndOfFrame Wait_End = new WaitForEndOfFrame();
+    WaitForSeconds Wait_Five = new WaitForSeconds(0.5f);
+
     UI_Tile firstTouch_Tile;
     public UI_Tile FirstTouch_Tile
     {
@@ -81,9 +84,10 @@ public class TileManager : MonoBehaviour
         var color = start.GetTile.Get_Tile_Color();
         var startPoint = start.GetPoint;
 
+        List<UI_Tile_Slot> line = new List<UI_Tile_Slot>();
         foreach (var (dx, dy) in i_Directions)
         {
-            List<UI_Tile_Slot> line = new List<UI_Tile_Slot>();
+            line.Clear();
             line.Add(start);
 
             // +방향
@@ -231,7 +235,9 @@ public class TileManager : MonoBehaviour
         foreach (var huddle in huddletile)
         {
             if (hs_paengi.Contains(huddle))
+            {
                 continue;
+            }
 
             // 이 Huddle 타일이 파괴 대상 그룹 중 하나라도 인접해 있는지 확인
             var removetile = destroyGroup
@@ -239,63 +245,15 @@ public class TileManager : MonoBehaviour
                 .Where(tile => tile != null)
                 .FirstOrDefault(tile => huddle.Check_Cursh(tile));
 
-            if (removetile != null)
+            if (removetile == null)
             {
-                // Set_Crush 함수 호출 (파괴되는 타일 전달)
-                huddle.Set_Crush(removetile);
-                // 처리된 타일로 표시
-                hs_paengi.Add(huddle);
-            }
-        }
-    }
-
-
-    /// <summary>
-    /// 모든 타일의 애니메이션이 완료될 때까지 기다림
-    /// </summary>
-    IEnumerator IE_Wait_For_Tile_Animations()
-    {
-        // 시작하기 전에 짧은 대기 (애니메이션이 시작될 시간 확보)
-        yield return new WaitForSeconds(0.02f);
-
-        // 최대 대기 시간 설정 (무한 대기 방지)
-        float maxWaitTime = 0.5f; // 다시 0.5초로 충분한 대기 시간 제공
-        float elapsedTime = 0f;
-
-        // 추가 안전 대기 횟수 - 모든 타일이 멈춘 것으로 확인되었지만, 추가로 대기하는 프레임 수
-        int safetyFrames = 3;
-        int currentSafetyFrame = 0;
-
-        while (elapsedTime < maxWaitTime)
-        {
-            bool anyMoving = false;
-
-            // 모든 타일 체크
-            foreach (var tile in L_Tile)
-            {
-                if (tile != null && tile.Check_Is_Moving())
-                {
-                    anyMoving = true;
-                    currentSafetyFrame = 0; // 움직이는 타일이 있으면 안전 카운터 리셋
-                    break;
-                }
+                continue;
             }
 
-            // 모든 타일이 정지 상태라면 안전 프레임 카운트 증가
-            if (!anyMoving)
-            {
-                currentSafetyFrame++;
-
-                // 안전 프레임 카운트가 목표에 도달하면 종료
-                if (currentSafetyFrame >= safetyFrames)
-                {
-                    yield break;
-                }
-            }
-
-            // 다음 프레임까지 대기
-            yield return null;
-            elapsedTime += Time.deltaTime;
+            // Set_Crush 함수 호출 (파괴되는 타일 전달)
+            huddle.Set_Crush(removetile);
+            // 처리된 타일로 표시
+            hs_paengi.Add(huddle);
         }
     }
 
@@ -358,7 +316,6 @@ public class TileManager : MonoBehaviour
         return G_Tile[idx];
     }
 
-
     /// <summary>
     /// 타일 제거 시 갯수처리
     /// </summary>
@@ -416,7 +373,7 @@ public class TileManager : MonoBehaviour
         //삭제가 되지 않았으면 매칭이 되지 않은 것이기 때문에 원위치 
         if (removelist.Count <= 0)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return Wait_Five;
             //원상복구
             firsttile.Set_Swap(secondtile);
 
@@ -440,7 +397,6 @@ public class TileManager : MonoBehaviour
     /// </summary>
     public void Reset()
     {
-        Debug.Log("리셋처리");
         FirstTouch_Tile = null;
         SecondTouch_Tile = null;
     }
@@ -459,7 +415,7 @@ public class TileManager : MonoBehaviour
             Create_Special_Tile(removelist, null);
 
             // 최소 딜레이로 설정
-            yield return new WaitForEndOfFrame();
+            yield return Wait_End;
 
             //빈공간 이동 및 신규 타일 생성
             int createcount = 0;
@@ -487,14 +443,11 @@ public class TileManager : MonoBehaviour
 
             //파괴 가능한 타일이 없다면 전체 섞기
             Set_All_Tile_Random();
-            yield return new WaitForEndOfFrame();
-
-            // 타일 섞기 후 애니메이션이 완료될 때까지 대기
-            yield return StartCoroutine(IE_Wait_For_Tile_Animations());
+            yield return Wait_End;
         }
 
         ClearManager.instance.Set_Clear();
-        yield return new WaitForEndOfFrame();
+        yield return Wait_End;
         PlayManager.instance.GetStay = false;
     }
 
@@ -523,15 +476,17 @@ public class TileManager : MonoBehaviour
                     float ny = currentPoint.Item2 + dy * dir;
 
                     // 이동할 위치의 슬롯 찾기
-                    var targetSlot = L_Tile_Slot.Find(s => s.GetPoint.Item1 == nx && Mathf.Approximately(s.GetPoint.Item2, ny));
-                    if (targetSlot == null || targetSlot.GetTile == null)
+                    var targetslot = L_Tile_Slot.Find(s => s.GetPoint.Item1 == nx && Mathf.Approximately(s.GetPoint.Item2, ny));
+                    if (targetslot == null || targetslot.GetTile == null)
+                    {
                         continue;
+                    }
 
                     // 임시로 타일 교환 (애니메이션 없이)
                     var tempTile1 = slot.GetTile;
-                    var tempTile2 = targetSlot.GetTile;
+                    var tempTile2 = targetslot.GetTile;
                     var tempSlot1 = slot;
-                    var tempSlot2 = targetSlot;
+                    var tempSlot2 = targetslot;
 
                     // 임시 교환 - 애니메이션 없이 교환
                     tempTile1.Set_Swap(tempTile2);
@@ -610,18 +565,18 @@ public class TileManager : MonoBehaviour
 
         while (true)
         {
-            var none_tile_list = Get_Tile_Slot.FindAll(x => x.GetTile == null).OrderBy(x => x.GetPoint.Item2).ToList();
+            //빈 슬롯 챙겨오기
+            var none_tile_list = Get_Tile_Slot.Where(x => x.GetTile == null).OrderBy(x => x.GetPoint.Item2).ToList();
+
+            //빈 슬롯이 없다면 종료
             if (none_tile_list.Count <= 0)
             {
                 break;
             }
-
-            yield return new WaitForEndOfFrame();
-
-            var yes_tile_list = Get_Tile_Slot.FindAll(x => x.GetTile != null).OrderBy(x => x.GetPoint.Item2).ToList();
+            var yes_tile_list = Get_Tile_Slot.Where(x => x.GetTile != null).OrderBy(x => x.GetPoint.Item2).ToList();
             remove_tile_list.Clear();
-            //이동경로 리스트
             move_tile_list.Clear();
+            //이동경로 리스트
             //수직 이동
             yield return StartCoroutine(Tile_Move(0, none_tile_list, yes_tile_list, remove_tile_list, move_tile_list));
 
@@ -656,7 +611,7 @@ public class TileManager : MonoBehaviour
     {
         foreach (var none_tile in none_tile_list)
         {
-            if (remove_tile_list.Find(x => x == none_tile))
+            if (remove_tile_list.Contains(none_tile))
             {
                 continue;
             }
@@ -682,7 +637,7 @@ public class TileManager : MonoBehaviour
                 }
 
                 //이미 포함된 타일인지 체크
-                if (remove_tile_list.Find(x => x == yes_tile) != null)
+                if (remove_tile_list.Contains(yes_tile))
                 {
                     //이동경로 저장
                     move_tile_list.Add(yes_tile);
