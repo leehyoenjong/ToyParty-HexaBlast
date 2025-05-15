@@ -27,9 +27,9 @@ public class SpecialManager : MonoBehaviour
     /// <summary>
     /// 삭제 갯수와 종류에 맞는 타일 가져오기 
     /// </summary>
-    public GameObject Get_Spceical_Type(int destorycount, E_Tile_Destory_Type types)
+    public GameObject Get_Spceical_Type(E_Tile_Destory_Type types)
     {
-        return L_Special_Tile.Find(x => x.DestoryCount == destorycount && x.DestoryType == types).G_Tile;
+        return L_Special_Tile.Find(x => x.DestoryType == types).G_Tile;
     }
 
     /// <summary>
@@ -54,7 +54,6 @@ public class SpecialManager : MonoBehaviour
 [Serializable]
 public struct St_Special_Tile
 {
-    public int DestoryCount;
     public E_Tile_Destory_Type DestoryType;
     public GameObject G_Tile;
 }

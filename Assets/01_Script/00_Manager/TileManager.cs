@@ -215,9 +215,8 @@ public class TileManager : MonoBehaviour
         }
 
         //삭제 갯수와 삭제 종류를 이용해 특수 타일 불러오기
-        var destorycount = removeslot.Count;
         var destorytypes = SpecialManager.instance.Get_Destory_Types(removeslot);
-        var specialtile = SpecialManager.instance.Get_Spceical_Type(destorycount, destorytypes);
+        var specialtile = SpecialManager.instance.Get_Spceical_Type(destorytypes);
 
         if (specialtile == null)
         {
