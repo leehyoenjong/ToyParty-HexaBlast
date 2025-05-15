@@ -51,7 +51,7 @@ public class UI_Tile_Diagonal : UI_Tile
             //오른쪽 대각선 전체 리스트
             case E_Tile_Destory_Type.Diagonal_Right:
                 //딕셔너리 형태로 x.GetPoint.Item1이 key값, List<UI_Tile_Slot>를 value값으로 하되, value값은 x.GetPoint.Item2가 작은거부터 나열 
-                var dict = slotlist.Where(x => x != tileslot).GroupBy(x => x.GetPoint.Item1).ToDictionary(g => g.Key, g => g.OrderBy(x => x.GetPoint.Item2).ToList());
+                var dict = slotlist.GroupBy(x => x.GetPoint.Item1).ToDictionary(g => g.Key, g => g.OrderBy(x => x.GetPoint.Item2).ToList());
 
                 //오른쪽 체크
                 var max = dict.Max(x => x.Value.Max(x => x.GetPoint.Item1));
@@ -82,7 +82,7 @@ public class UI_Tile_Diagonal : UI_Tile
                 }
 
                 //왼쪽 체크
-                dict = slotlist.Where(x => x != tileslot).GroupBy(x => x.GetPoint.Item1).ToDictionary(g => g.Key, g => g.OrderByDescending(x => x.GetPoint.Item2).ToList());
+                dict = slotlist.GroupBy(x => x.GetPoint.Item1).ToDictionary(g => g.Key, g => g.OrderByDescending(x => x.GetPoint.Item2).ToList());
                 var min = dict.Min(x => x.Value.Min(x => x.GetPoint.Item1));
                 add_y = -pos.Item2;
                 prevCount = dict[(int)pos.Item1].Count;
@@ -111,7 +111,7 @@ public class UI_Tile_Diagonal : UI_Tile
             //왼쪽 대각선 전체 리스트
             case E_Tile_Destory_Type.Diagonal_Left:
                 //딕셔너리 형태로 x.GetPoint.Item1이 key값, List<UI_Tile_Slot>를 value값으로 하되, value값은 x.GetPoint.Item2가 작은거부터 나열 
-                dict = slotlist.Where(x => x != tileslot).GroupBy(x => x.GetPoint.Item1).ToDictionary(g => g.Key, g => g.OrderBy(x => x.GetPoint.Item2).ToList());
+                dict = slotlist.GroupBy(x => x.GetPoint.Item1).ToDictionary(g => g.Key, g => g.OrderBy(x => x.GetPoint.Item2).ToList());
 
                 //오른쪽 체크
                 min = dict.Min(x => x.Value.Min(x => x.GetPoint.Item1));
@@ -144,7 +144,7 @@ public class UI_Tile_Diagonal : UI_Tile
                 }
 
                 //왼쪽 체크
-                dict = slotlist.Where(x => x != tileslot).GroupBy(x => x.GetPoint.Item1).ToDictionary(g => g.Key, g => g.OrderByDescending(x => x.GetPoint.Item2).ToList());
+                dict = slotlist.GroupBy(x => x.GetPoint.Item1).ToDictionary(g => g.Key, g => g.OrderByDescending(x => x.GetPoint.Item2).ToList());
                 add_y = -pos.Item2;
                 prevCount = dict[(int)pos.Item1].Count;
                 max = dict.Max(x => x.Value.Max(x => x.GetPoint.Item1));
@@ -175,6 +175,10 @@ public class UI_Tile_Diagonal : UI_Tile
         //타입에 따른 타일제거
         foreach (var item in removelist)
         {
+            if (item == this)
+            {
+                continue;
+            }
             item.RemoveTile(item);
         }
         base.RemoveTile(tileslot);

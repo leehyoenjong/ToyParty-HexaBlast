@@ -423,11 +423,6 @@ public class TileManager : MonoBehaviour
     {
         while (true)
         {
-            //빈공간 이동 및 신규 타일 생성
-            int createcount = 0;
-            System.Action<int> checkcraete = (value) => createcount = value;
-            yield return StartCoroutine(Set_All_Move_Tile(checkcraete));
-
             //삭제
             var result_remove_list = All_Scan_Remove();
 
@@ -441,6 +436,11 @@ public class TileManager : MonoBehaviour
 
             // 최소 딜레이로 설정
             yield return Wait_End;
+
+            //빈공간 이동 및 신규 타일 생성
+            int createcount = 0;
+            System.Action<int> checkcraete = (value) => createcount = value;
+            yield return StartCoroutine(Set_All_Move_Tile(checkcraete));
 
             //파괴한 타일과 생성한 타일이 없다면 종료
             if (result_remove_list.Item1.Count <= 0 && createcount <= 0)
@@ -466,8 +466,8 @@ public class TileManager : MonoBehaviour
             yield return Wait_End;
         }
 
-        yield return Wait_End;
         ClearManager.instance.Set_Clear();
+        yield return Wait_End;
         PlayManager.instance.GetStay = false;
     }
 
