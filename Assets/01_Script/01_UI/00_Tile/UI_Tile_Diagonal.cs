@@ -40,7 +40,7 @@ public class UI_Tile_Diagonal : UI_Tile
         return base.Set_Tile_Color(color);
     }
 
-    public override void RemoveTile(UI_Tile removetile)
+    public override void RemoveTile(UI_Tile_Slot tileslot)
     {
         var pos = Get_Tile_Slot.GetPoint;
         var slotlist = TileManager.instance.Get_Tile_Slot;
@@ -51,7 +51,7 @@ public class UI_Tile_Diagonal : UI_Tile
             //오른쪽 대각선 전체 리스트
             case E_Tile_Destory_Type.Diagonal_Right:
                 //딕셔너리 형태로 x.GetPoint.Item1이 key값, List<UI_Tile_Slot>를 value값으로 하되, value값은 x.GetPoint.Item2가 작은거부터 나열 
-                var dict = slotlist.GroupBy(x => x.GetPoint.Item1).ToDictionary(g => g.Key, g => g.OrderBy(x => x.GetPoint.Item2).ToList());
+                var dict = slotlist.Where(x => x != Get_Tile_Slot).GroupBy(x => x.GetPoint.Item1).ToDictionary(g => g.Key, g => g.OrderBy(x => x.GetPoint.Item2).ToList());
 
                 //오른쪽 체크
                 var max = dict.Max(x => x.Value.Max(x => x.GetPoint.Item1));
@@ -111,7 +111,7 @@ public class UI_Tile_Diagonal : UI_Tile
             //왼쪽 대각선 전체 리스트
             case E_Tile_Destory_Type.Diagonal_Left:
                 //딕셔너리 형태로 x.GetPoint.Item1이 key값, List<UI_Tile_Slot>를 value값으로 하되, value값은 x.GetPoint.Item2가 작은거부터 나열 
-                dict = slotlist.GroupBy(x => x.GetPoint.Item1).ToDictionary(g => g.Key, g => g.OrderBy(x => x.GetPoint.Item2).ToList());
+                dict = slotlist.Where(x => x != Get_Tile_Slot).GroupBy(x => x.GetPoint.Item1).ToDictionary(g => g.Key, g => g.OrderBy(x => x.GetPoint.Item2).ToList());
 
                 //오른쪽 체크
                 min = dict.Min(x => x.Value.Min(x => x.GetPoint.Item1));
@@ -175,8 +175,8 @@ public class UI_Tile_Diagonal : UI_Tile
         //타입에 따른 타일제거
         foreach (var item in removelist)
         {
-            item.RemoveTile();
+            item.RemoveTile(tileslot);
         }
-        base.RemoveTile(removetile);
+        base.RemoveTile(tileslot);
     }
 }

@@ -172,9 +172,10 @@ public class UI_Tile : MonoBehaviour
     /// <summary>
     /// 타일제거
     /// </summary>
-    public virtual void RemoveTile(UI_Tile removetile)
+    public virtual void RemoveTile(UI_Tile_Slot tile)
     {
         TileManager.instance.Destory_Tile_Count(this);
+        EffectManager.instance.Create_Boom(Get_Tile_Color(), tile.GetPos);
 
         if (this == null || this.gameObject == null)
         {

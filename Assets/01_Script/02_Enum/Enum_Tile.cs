@@ -20,5 +20,5 @@ public enum E_Tile_Destory_Type
     Beeline_UpDown,
     Diagonal_Right,
     Diagonal_Left,
-
+    UFO,
 }

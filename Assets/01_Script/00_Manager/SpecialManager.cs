@@ -21,6 +21,7 @@ public class SpecialManager : MonoBehaviour
         patternRecognizers.Add(new Up_Down_Line_Pattern());
         patternRecognizers.Add(new Diagonal_Left_Pattern());
         patternRecognizers.Add(new Diagonal_Right_Pattern());
+        patternRecognizers.Add(new UFO_Pattern());
         // 추가 패턴 인식기들...
     }
 

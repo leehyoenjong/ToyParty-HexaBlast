@@ -5262,9 +5262,10 @@ MonoBehaviour:
     G_Tile: {fileID: 4888945383822184511, guid: 0aba82cdd1460bf42b708f4ccd2ce9c8, type: 3}
   - DestoryType: 2
     G_Tile: {fileID: 472325870514550609, guid: 67f7a155f419c8244a112d60a05c0331, type: 3}
-  - DestoryCount: 4
-    DestoryType: 3
+  - DestoryType: 3
     G_Tile: {fileID: 7780499652350888235, guid: 8b8fa14eba403fa46ac3e6e41c39cacd, type: 3}
+  - DestoryType: 4
+    G_Tile: {fileID: 6694834946929970158, guid: 37ded844d5a76d74ea71ed2c640d4e18, type: 3}
 --- !u!114 &1384873852
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5290,6 +5291,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   G_Tile_Boom_Effect:
+  - {fileID: 7329845403626169455, guid: 4788badbaf2d37a499408c6927c1ef74, type: 3}
   - {fileID: 5555347077057111836, guid: b07d296cc745f834fbe695b028a559f5, type: 3}
   - {fileID: 2320165256490857253, guid: 4adcd86c84d68cd4aba64e703178584d, type: 3}
   - {fileID: 6932097144112349516, guid: 7ca4c6873eba8a244aa3df0dd6b360d8, type: 3}
