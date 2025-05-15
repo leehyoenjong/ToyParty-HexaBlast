@@ -196,6 +196,7 @@ public class TileManager : MonoBehaviour
                 continue;
             }
             destorycolor = slot.GetTile.Get_Tile_Color();
+            EffectManager.instance.Create_Boom(destorycolor, slot.GetPos);
             slot.RemoveTile();
         }
         ClearManager.instance.Update_Clear_Count();
@@ -381,6 +382,10 @@ public class TileManager : MonoBehaviour
 
         //삭제처리
         var remove_result = All_Scan_Remove();
+        if (remove_result.Item1.Count > 0)
+        {
+            yield return Wait_Five;
+        }
 
         //특수 블록 생성
         Create_Special_Tile(remove_result.Item1, secondslot, remove_result.Item2);
@@ -425,6 +430,11 @@ public class TileManager : MonoBehaviour
         {
             //삭제
             var result_remove_list = All_Scan_Remove();
+
+            if (result_remove_list.Item1.Count > 0)
+            {
+                yield return Wait_Five;
+            }
 
             //특수블록 생성
             Create_Special_Tile(result_remove_list.Item1, null, result_remove_list.Item2);

@@ -11,10 +11,10 @@ PrefabInstance:
     - target: {fileID: 6261449209345187546, guid: f0109b407baf93a469059a16b997ef84, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 361ed84daf8f2ab4a8e324bc57868f21, type: 3}
+      objectReference: {fileID: 21300000, guid: bacc3820542ba0c42ba212bc5c1bf6ec, type: 3}
     - target: {fileID: 6351598088197818474, guid: f0109b407baf93a469059a16b997ef84, type: 3}
       propertyPath: m_Name
-      value: UI_Tile_Diagonal
+      value: UI_Tile_Diagonal_Right
       objectReference: {fileID: 0}
     - target: {fileID: 7419362804538284231, guid: f0109b407baf93a469059a16b997ef84, type: 3}
       propertyPath: m_Pivot.x

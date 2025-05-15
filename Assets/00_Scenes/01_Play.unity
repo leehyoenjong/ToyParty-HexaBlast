@@ -1030,6 +1030,81 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   T_Count: {fileID: 865638992}
+--- !u!1 &264733711
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 264733712}
+  - component: {fileID: 264733714}
+  - component: {fileID: 264733713}
+  m_Layer: 5
+  m_Name: Tile_Grid_Effect
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &264733712
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 264733711}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 273002930}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &264733713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 264733711}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &264733714
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 264733711}
+  m_CullTransparentMesh: 1
 --- !u!1 &273002929
 GameObject:
   m_ObjectHideFlags: 0
@@ -1066,6 +1141,7 @@ RectTransform:
   - {fileID: 1056155522}
   - {fileID: 1055687196}
   - {fileID: 1017453763}
+  - {fileID: 264733712}
   m_Father: {fileID: 1654186530}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -5069,6 +5145,7 @@ GameObject:
   - component: {fileID: 1384873850}
   - component: {fileID: 1384873851}
   - component: {fileID: 1384873852}
+  - component: {fileID: 1384873853}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -5181,11 +5258,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   L_Special_Tile:
-  - DestoryCount: 4
-    DestoryType: 1
+  - DestoryType: 1
     G_Tile: {fileID: 4888945383822184511, guid: 0aba82cdd1460bf42b708f4ccd2ce9c8, type: 3}
-  - DestoryCount: 4
-    DestoryType: 2
+  - DestoryType: 2
     G_Tile: {fileID: 472325870514550609, guid: 67f7a155f419c8244a112d60a05c0331, type: 3}
   - DestoryCount: 4
     DestoryType: 3
@@ -5202,6 +5277,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70b9119ea700493499ff4226955dc13d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1384873853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1384873844}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 851d4fefbec002845acf81938fc51434, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  G_Tile_Boom_Effect:
+  - {fileID: 5555347077057111836, guid: b07d296cc745f834fbe695b028a559f5, type: 3}
+  - {fileID: 2320165256490857253, guid: 4adcd86c84d68cd4aba64e703178584d, type: 3}
+  - {fileID: 6932097144112349516, guid: 7ca4c6873eba8a244aa3df0dd6b360d8, type: 3}
+  - {fileID: 2737048063952100914, guid: 5be61bb3a4534464492c774b68ce4252, type: 3}
+  Tr_Parent: {fileID: 264733712}
 --- !u!1 &1386325202
 GameObject:
   m_ObjectHideFlags: 0
