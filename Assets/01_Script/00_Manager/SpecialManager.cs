@@ -7,9 +7,21 @@ public class SpecialManager : MonoBehaviour
     public static SpecialManager instance;
     [SerializeField] List<St_Special_Tile> L_Special_Tile = new List<St_Special_Tile>();
 
+    private List<IPatternRecognizer> patternRecognizers = new List<IPatternRecognizer>();
+
     void Awake()
     {
         instance = this;
+        InitializePatternRecognizers();
+    }
+
+    private void InitializePatternRecognizers()
+    {
+        // 순서가 중요함 - 더 구체적인 패턴이 먼저 체크되어야 함
+        patternRecognizers.Add(new Up_Down_Line_Pattern());
+        patternRecognizers.Add(new Diagonal_Left_Pattern());
+        patternRecognizers.Add(new Diagonal_Right_Pattern());
+        // 추가 패턴 인식기들...
     }
 
     /// <summary>
@@ -25,24 +37,17 @@ public class SpecialManager : MonoBehaviour
     /// </summary>
     public E_Tile_Destory_Type Get_Destory_Types(HashSet<UI_Tile_Slot> slotlist)
     {
-        // 모든 슬롯의 좌표를 리스트로 변환
-        var points = new List<(float, float)>();
-        foreach (var slot in slotlist)
+        // 각 패턴 인식기를 순서대로 시도
+        foreach (var recognizer in patternRecognizers)
         {
-            points.Add(slot.GetPoint);
+            if (recognizer.IsMatch(slotlist))
+            {
+                return recognizer.GetPatternType();
+            }
         }
 
-        // x좌표가 모두 같으면 세로 직선
-        bool allSameX = points.TrueForAll(p => Mathf.Approximately(p.Item1, points[0].Item1));
-        // y좌표가 모두 같으면 가로 직선
-        bool allSameY = points.TrueForAll(p => Mathf.Approximately(p.Item2, points[0].Item2));
-
-        if (allSameX || allSameY)
-        {
-            return E_Tile_Destory_Type.Beeline_UpDown;
-        }
-
-        return E_Tile_Destory_Type.Diagonal_Right;
+        // 기본값 반환
+        return E_Tile_Destory_Type.NONE;
     }
 }
 
