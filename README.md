@@ -10,3 +10,5 @@
 
 구현되지 않은 기능
 - 하트소모, 골드소모, 아이템 사용, 부메랑, 폭탄, 등껍질, 추가 스테이지, 스테이지 클리어 후 정보 저장, 특수타일끼리 효과
+
+깃 링크 : https://github.com/leehyoenjong/ToyParty-HexaBlast 
