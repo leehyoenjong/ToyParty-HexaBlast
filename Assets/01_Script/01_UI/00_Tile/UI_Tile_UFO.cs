@@ -10,7 +10,6 @@ public class UI_Tile_UFO : UI_Tile
 
     public override void RemoveTile(UI_Tile_Slot tileslot)
     {
-
         var list = TileManager.instance.Get_Tile_Slot;
         var removelist = new HashSet<UI_Tile_Slot>();
 

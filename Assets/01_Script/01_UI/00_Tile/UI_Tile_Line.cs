@@ -45,7 +45,7 @@ public class UI_Tile_Line : UI_Tile
         //타입에 따른 타일제거
         foreach (var item in removelist)
         {
-            item.RemoveTile(tileslot);
+            item.RemoveTile(item);
         }
         base.RemoveTile(tileslot);
     }

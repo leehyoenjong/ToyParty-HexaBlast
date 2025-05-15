@@ -17,7 +17,7 @@ public class UI_Tile_Paengi : UI_Tile
         {
             return;
         }
-        base.RemoveTile(tileslot);
+        base.RemoveTile(Get_Tile_Slot);
     }
 
     /// <summary>
