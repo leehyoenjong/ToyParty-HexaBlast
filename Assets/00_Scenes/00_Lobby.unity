@@ -211,6 +211,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: '@UI_Stage_Slot (14)'
       objectReference: {fileID: 0}
+    - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -312,6 +316,10 @@ PrefabInstance:
     - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
       propertyPath: m_Name
       value: '@UI_Stage_Slot (10)'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -415,6 +423,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: '@UI_Stage_Slot (7)'
       objectReference: {fileID: 0}
+    - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -478,8 +490,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 1357.1393}
-  m_SizeDelta: {x: 0, y: 3260.1387}
+  m_AnchoredPosition: {x: 0, y: 0.00012207}
+  m_SizeDelta: {x: 0, y: 1903}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &341333550
 GameObject:
@@ -618,6 +630,10 @@ PrefabInstance:
     - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
       propertyPath: m_Name
       value: '@UI_Stage_Slot (18)'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -801,6 +817,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: '@UI_Stage_Slot (16)'
       objectReference: {fileID: 0}
+    - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -902,6 +922,10 @@ PrefabInstance:
     - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
       propertyPath: m_Name
       value: '@UI_Stage_Slot (19)'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1107,6 +1131,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: '@UI_Stage_Slot (5)'
       objectReference: {fileID: 0}
+    - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1208,6 +1236,10 @@ PrefabInstance:
     - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
       propertyPath: m_Name
       value: '@UI_Stage_Slot (8)'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1311,6 +1343,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: '@UI_Stage_Slot (15)'
       objectReference: {fileID: 0}
+    - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1413,6 +1449,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: '@UI_Stage_Slot (6)'
       objectReference: {fileID: 0}
+    - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1514,6 +1554,10 @@ PrefabInstance:
     - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
       propertyPath: m_Name
       value: '@UI_Stage_Slot (9)'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1706,6 +1750,10 @@ PrefabInstance:
     - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
       propertyPath: m_Name
       value: '@UI_Stage_Slot (13)'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1961,6 +2009,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: '@UI_Stage_Slot (1)'
       objectReference: {fileID: 0}
+    - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2137,6 +2189,10 @@ PrefabInstance:
     - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
       propertyPath: m_Name
       value: '@UI_Stage_Slot (4)'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2363,6 +2419,10 @@ PrefabInstance:
     - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
       propertyPath: m_Name
       value: '@UI_Stage_Slot (3)'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2701,8 +2761,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 677443163}
   m_HandleRect: {fileID: 677443162}
   m_Direction: 2
-  m_Value: -0.0000003597873
-  m_Size: 0.5837175
+  m_Value: 0
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -3325,7 +3385,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1535570445099091848, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 1165
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1535570445099091848, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -3444,6 +3504,10 @@ PrefabInstance:
     - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
       propertyPath: m_Name
       value: '@UI_Stage_Slot (12)'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3936,6 +4000,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: '@UI_Stage_Slot (17)'
       objectReference: {fileID: 0}
+    - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4037,6 +4105,10 @@ PrefabInstance:
     - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
       propertyPath: m_Name
       value: '@UI_Stage_Slot (2)'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4312,6 +4384,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: '@UI_Stage_Slot (11)'
       objectReference: {fileID: 0}
+    - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4515,6 +4591,10 @@ PrefabInstance:
     - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
       propertyPath: m_Name
       value: '@UI_Stage_Slot'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4402237589323465881, guid: 1bed2084331a4d94da6faabe161ce528, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
