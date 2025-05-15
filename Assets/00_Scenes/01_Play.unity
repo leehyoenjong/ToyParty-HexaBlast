@@ -5187,6 +5187,9 @@ MonoBehaviour:
   - DestoryCount: 4
     DestoryType: 2
     G_Tile: {fileID: 472325870514550609, guid: 67f7a155f419c8244a112d60a05c0331, type: 3}
+  - DestoryCount: 4
+    DestoryType: 3
+    G_Tile: {fileID: 7780499652350888235, guid: 8b8fa14eba403fa46ac3e6e41c39cacd, type: 3}
 --- !u!114 &1384873852
 MonoBehaviour:
   m_ObjectHideFlags: 0
