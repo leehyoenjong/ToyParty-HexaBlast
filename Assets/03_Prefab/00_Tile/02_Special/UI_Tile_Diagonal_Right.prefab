@@ -11,7 +11,11 @@ PrefabInstance:
     - target: {fileID: 6261449209345187546, guid: f0109b407baf93a469059a16b997ef84, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: bacc3820542ba0c42ba212bc5c1bf6ec, type: 3}
+      objectReference: {fileID: 2084103984282785795, guid: 0e68c26c4bf772443b6543b47137ebbb, type: 3}
+    - target: {fileID: 6261449209345187546, guid: f0109b407baf93a469059a16b997ef84, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6351598088197818474, guid: f0109b407baf93a469059a16b997ef84, type: 3}
       propertyPath: m_Name
       value: UI_Tile_Diagonal_Right

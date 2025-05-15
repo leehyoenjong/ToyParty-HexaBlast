@@ -20,7 +20,6 @@ public class TouchManasger : MonoBehaviour
         // 입력이 끝났을 때만 초기화
         if (isInputActive && !currentInputActive && !PlayManager.instance.GetStay)
         {
-            Debug.Log("입력 종료 - 삭제완료");
             TileManager.instance.Reset();
         }
 
@@ -66,7 +65,6 @@ public class TouchManasger : MonoBehaviour
             TileManager.instance.SecondTouch_Tile = tile;
             PlayManager.instance.GetStay = true;
             StartCoroutine(TileManager.instance.IE_Swap());
-            Debug.Log("너 이새끼 두번 작동되지");
         }
     }
 }

@@ -2,9 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using DG.Tweening;
-using System.Threading;
-using System;
 
 public class TileManager : MonoBehaviour
 {
@@ -365,8 +362,9 @@ public class TileManager : MonoBehaviour
         yield return this.WaitForAll(firsttile.Move_Tile(secondslot), secondtile.Move_Tile(firstslot));
 
         //UFO 블록 특수처리
-        var check_ufo_frist = firsttile.Get_Tile_Destory_Type == E_Tile_Destory_Type.UFO;
-        var check_ufo_sconde = secondtile.Get_Tile_Destory_Type == E_Tile_Destory_Type.UFO;
+        var check_ufo_frist = firsttile.Get_Tile_Destory_Type == E_Tile_Destory_Type.UFO && secondtile.Get_Tile_Kind() != E_Tile_Kind.Huddle;
+        var check_ufo_sconde = secondtile.Get_Tile_Destory_Type == E_Tile_Destory_Type.UFO && firsttile.Get_Tile_Kind() != E_Tile_Kind.Huddle;
+
         //둘중 UFO가 아닌 색을 매개변수로 넘김
         if (check_ufo_frist)
         {
@@ -425,6 +423,11 @@ public class TileManager : MonoBehaviour
     {
         while (true)
         {
+            //빈공간 이동 및 신규 타일 생성
+            int createcount = 0;
+            System.Action<int> checkcraete = (value) => createcount = value;
+            yield return StartCoroutine(Set_All_Move_Tile(checkcraete));
+
             //삭제
             var result_remove_list = All_Scan_Remove();
 
@@ -438,11 +441,6 @@ public class TileManager : MonoBehaviour
 
             // 최소 딜레이로 설정
             yield return Wait_End;
-
-            //빈공간 이동 및 신규 타일 생성
-            int createcount = 0;
-            System.Action<int> checkcraete = (value) => createcount = value;
-            yield return StartCoroutine(Set_All_Move_Tile(checkcraete));
 
             //파괴한 타일과 생성한 타일이 없다면 종료
             if (result_remove_list.Item1.Count <= 0 && createcount <= 0)
@@ -468,8 +466,8 @@ public class TileManager : MonoBehaviour
             yield return Wait_End;
         }
 
-        ClearManager.instance.Set_Clear();
         yield return Wait_End;
+        ClearManager.instance.Set_Clear();
         PlayManager.instance.GetStay = false;
     }
 
