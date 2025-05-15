@@ -20,9 +20,7 @@ public class EffectManager : MonoBehaviour
     /// <param name="createpos"></param>
     public void Create_Boom(E_Tile_Color color, Vector2 createpos)
     {
-        var idx = (int)color - 1;
-        var effect = Instantiate(G_Tile_Boom_Effect[idx], Tr_Parent).GetComponent<UI_Tile_Boom_Effect>();
+        var effect = Instantiate(G_Tile_Boom_Effect[(int)color], Tr_Parent).GetComponent<UI_Tile_Boom_Effect>();
         effect.Initailized(createpos);
-
     }
 }

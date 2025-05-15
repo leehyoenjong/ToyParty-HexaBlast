@@ -40,7 +40,7 @@ public class UI_Tile_Diagonal : UI_Tile
         return base.Set_Tile_Color(color);
     }
 
-    public override void RemoveTile(UI_Tile removetile)
+    public override void RemoveTile(UI_Tile_Slot tileslot)
     {
         var pos = Get_Tile_Slot.GetPoint;
         var slotlist = TileManager.instance.Get_Tile_Slot;
@@ -55,7 +55,7 @@ public class UI_Tile_Diagonal : UI_Tile
 
                 //오른쪽 체크
                 var max = dict.Max(x => x.Value.Max(x => x.GetPoint.Item1));
-                var add_y = pos.Item2;
+                var add_y = -pos.Item2;
                 var prevCount = dict[(int)pos.Item1].Count;
                 for (int i = (int)pos.Item1 + 1; i <= max; i++)
                 {
@@ -84,7 +84,7 @@ public class UI_Tile_Diagonal : UI_Tile
                 //왼쪽 체크
                 dict = slotlist.GroupBy(x => x.GetPoint.Item1).ToDictionary(g => g.Key, g => g.OrderByDescending(x => x.GetPoint.Item2).ToList());
                 var min = dict.Min(x => x.Value.Min(x => x.GetPoint.Item1));
-                add_y = pos.Item2;
+                add_y = -pos.Item2;
                 prevCount = dict[(int)pos.Item1].Count;
                 for (int i = (int)pos.Item1 - 1; i >= min; i--)
                 {
@@ -116,7 +116,7 @@ public class UI_Tile_Diagonal : UI_Tile
                 //오른쪽 체크
                 min = dict.Min(x => x.Value.Min(x => x.GetPoint.Item1));
 
-                add_y = pos.Item2;
+                add_y = -pos.Item2;
                 prevCount = dict[(int)pos.Item1].Count;
                 for (int i = (int)pos.Item1 - 1; i >= min; i--)
 
@@ -145,7 +145,7 @@ public class UI_Tile_Diagonal : UI_Tile
 
                 //왼쪽 체크
                 dict = slotlist.GroupBy(x => x.GetPoint.Item1).ToDictionary(g => g.Key, g => g.OrderByDescending(x => x.GetPoint.Item2).ToList());
-                add_y = pos.Item2;
+                add_y = -pos.Item2;
                 prevCount = dict[(int)pos.Item1].Count;
                 max = dict.Max(x => x.Value.Max(x => x.GetPoint.Item1));
                 for (int i = (int)pos.Item1 + 1; i <= max; i++)
@@ -175,8 +175,8 @@ public class UI_Tile_Diagonal : UI_Tile
         //타입에 따른 타일제거
         foreach (var item in removelist)
         {
-            item.RemoveTile();
+            item.RemoveTile(item);
         }
-        base.RemoveTile(removetile);
+        base.RemoveTile(tileslot);
     }
 }

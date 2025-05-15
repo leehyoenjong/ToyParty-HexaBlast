@@ -60,7 +60,6 @@ public class UI_Grid : MonoBehaviour
                 var pos = new Vector2(x, y);
                 slot.Initailzed(pos, (x * 0.01f, y * 0.01f));
                 slot.gameObject.name = $"Slot_{x * 0.01f}_{y * 0.01f}";
-                Debug.Log($"생성위치 :{x * 0.01f},{y * 0.01f}");
 
                 //강제 타일 생성
                 if (directtile.Count > 0)

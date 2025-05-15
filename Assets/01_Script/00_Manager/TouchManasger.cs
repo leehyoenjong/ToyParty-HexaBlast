@@ -41,7 +41,6 @@ public class TouchManasger : MonoBehaviour
         // 첫 번째 타일 저장
         TileManager.instance.FirstTouch_Tile = tile;
         TileManager.instance.SecondTouch_Tile = null; // 두 번째 타일 초기화
-        Debug.Log($"첫번째 타일 선택 - {tile.gameObject.name}");
     }
 
     /// <summary>
@@ -65,9 +64,9 @@ public class TouchManasger : MonoBehaviour
         if (first != tile)
         {
             TileManager.instance.SecondTouch_Tile = tile;
-            Debug.Log($"두번째 타일 선택 - {tile.gameObject.name}");
-            // 두 타일의 위치 교환
-            TileManager.instance.SwapTiles();
+            PlayManager.instance.GetStay = true;
+            StartCoroutine(TileManager.instance.IE_Swap());
+            Debug.Log("너 이새끼 두번 작동되지");
         }
     }
 }

@@ -196,8 +196,7 @@ public class TileManager : MonoBehaviour
                 continue;
             }
             destorycolor = slot.GetTile.Get_Tile_Color();
-            EffectManager.instance.Create_Boom(destorycolor, slot.GetPos);
-            slot.RemoveTile();
+            slot.RemoveTile(slot);
         }
         ClearManager.instance.Update_Clear_Count();
 
@@ -268,7 +267,7 @@ public class TileManager : MonoBehaviour
             }
 
             // Set_Crush 함수 호출 (파괴되는 타일 전달)
-            huddle.RemoveTile(removetile);
+            huddle.RemoveTile(removetile.Get_Tile_Slot);
             // 처리된 타일로 표시
             hs_tile.Add(huddle);
         }
@@ -348,25 +347,10 @@ public class TileManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 두 타일의 위치 교환
-    /// </summary>
-    public void SwapTiles()
-    {
-        if (FirstTouch_Tile == null || SecondTouch_Tile == null)
-        {
-            return;
-        }
-
-        PlayManager.instance.GetStay = true;
-
-        StartCoroutine(IE_Swap());
-    }
-
-    /// <summary>
     /// 스캔 후 리셋 
     /// </summary>
     /// <returns></returns>
-    IEnumerator IE_Swap()
+    public IEnumerator IE_Swap()
     {
         // 각 타일의 슬롯 가져오기
         var firstslot = FirstTouch_Tile.Get_Tile_Slot;
@@ -380,6 +364,20 @@ public class TileManager : MonoBehaviour
         //위치 이동 및 끝날때까지 대기
         yield return this.WaitForAll(firsttile.Move_Tile(secondslot), secondtile.Move_Tile(firstslot));
 
+        //UFO 블록 특수처리
+        var check_ufo_frist = firsttile.Get_Tile_Destory_Type == E_Tile_Destory_Type.UFO;
+        var check_ufo_sconde = secondtile.Get_Tile_Destory_Type == E_Tile_Destory_Type.UFO;
+        //둘중 UFO가 아닌 색을 매개변수로 넘김
+        if (check_ufo_frist)
+        {
+            secondslot.RemoveTile(firstslot);
+        }
+        else if (check_ufo_sconde)
+        {
+
+            firstslot.RemoveTile(secondslot);
+        }
+
         //삭제처리
         var remove_result = All_Scan_Remove();
         if (remove_result.Item1.Count > 0)
@@ -391,7 +389,7 @@ public class TileManager : MonoBehaviour
         Create_Special_Tile(remove_result.Item1, secondslot, remove_result.Item2);
 
         //삭제가 되지 않았으면 매칭이 되지 않은 것이기 때문에 원위치 
-        if (remove_result.Item1.Count <= 0)
+        if (remove_result.Item1.Count <= 0 && !check_ufo_frist && !check_ufo_sconde)
         {
             yield return Wait_Five;
             //원상복구
@@ -404,7 +402,6 @@ public class TileManager : MonoBehaviour
             Reset();
             yield break;
         }
-
 
         //원상복구가 아니라면 이동횟수 차감처리 
         Reset();

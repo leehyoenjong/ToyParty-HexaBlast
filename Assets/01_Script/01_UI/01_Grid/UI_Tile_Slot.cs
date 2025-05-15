@@ -39,13 +39,15 @@ public class UI_Tile_Slot : MonoBehaviour
     /// <summary>
     /// 타일 삭제
     /// </summary>
-    public void RemoveTile()
+    public void RemoveTile(UI_Tile_Slot ui_tile)
     {
-        if (Ui_Tile != null)
+        if (Ui_Tile == null)
         {
-            Ui_Tile.RemoveTile(null);
-            Ui_Tile = null;
+            return;
         }
+
+        Ui_Tile.RemoveTile(ui_tile);
+        Ui_Tile = null;
     }
 
     /// <summary>

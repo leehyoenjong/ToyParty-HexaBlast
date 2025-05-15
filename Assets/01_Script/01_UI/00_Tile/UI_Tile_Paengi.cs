@@ -8,7 +8,7 @@ public class UI_Tile_Paengi : UI_Tile
     /// <summary>
     /// 근처 파괴 시 발동
     /// </summary>
-    public override void RemoveTile(UI_Tile removetile)
+    public override void RemoveTile(UI_Tile_Slot tileslot)
     {
         //횟수를 모두 소모하면 제거
         CrushCount--;
@@ -17,7 +17,7 @@ public class UI_Tile_Paengi : UI_Tile
         {
             return;
         }
-        base.RemoveTile(removetile);
+        base.RemoveTile(Get_Tile_Slot);
     }
 
     /// <summary>
