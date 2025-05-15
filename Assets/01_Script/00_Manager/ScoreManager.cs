@@ -45,6 +45,15 @@ public class ScoreManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 다이렉트 점수 
+    /// </summary>
+    public void Update_Score_Direct(int score)
+    {
+        CurScore += score;
+        GetUI_Score_Profile().Update_Score(CurScore);
+    }
+
+    /// <summary>
     /// 점수에 따른 메달 색상 반환
     /// </summary>
     /// <param name="score">현재 점수</param>

@@ -76,7 +76,7 @@ public class ClearManager : MonoBehaviour
         }
 
         //이동횟수가 없다면
-        if (Cur_Claer_Count <= 0)
+        if (Cur_Move_Count <= 0)
         {
             //실패처리
             uI_Clear.Set_Faild();
