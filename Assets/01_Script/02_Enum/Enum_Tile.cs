@@ -18,7 +18,10 @@ public enum E_Tile_Destory_Type
 {
     NONE,
     Beeline_UpDown,
-    Diagonal_Right,
-    Diagonal_Left,
+    Diagonal_Right_Line,
+    Diagonal_Left_Line,
     UFO,
+    UpDown,
+    Diagonal_Right,
+    Diagonal_Left
 }

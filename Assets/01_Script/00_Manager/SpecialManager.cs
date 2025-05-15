@@ -19,8 +19,8 @@ public class SpecialManager : MonoBehaviour
     {
         // 순서가 중요함 - 더 구체적인 패턴이 먼저 체크되어야 함
         patternRecognizers.Add(new Up_Down_Line_Pattern());
-        patternRecognizers.Add(new Diagonal_Left_Pattern());
-        patternRecognizers.Add(new Diagonal_Right_Pattern());
+        patternRecognizers.Add(new Diagonal_Left_Line_Pattern());
+        patternRecognizers.Add(new Diagonal_Right_Line_Pattern());
         patternRecognizers.Add(new UFO_Pattern());
         // 추가 패턴 인식기들...
     }

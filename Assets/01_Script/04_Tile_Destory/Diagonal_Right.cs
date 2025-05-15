@@ -2,11 +2,11 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Diagonal_Right_Pattern : IPatternRecognizer
+public class Diagonal_Right : IPatternRecognizer
 {
     public bool IsMatch(HashSet<UI_Tile_Slot> slotlist)
     {
-        if (slotlist.Count != 4)
+        if (slotlist.Count != 3)
         {
             return false;
         }

@@ -5,6 +5,8 @@ using UnityEngine;
 using DG.Tweening;
 using System.Threading;
 using System;
+using Unity.Collections;
+using Unity.VisualScripting;
 
 public class TileManager : MonoBehaviour
 {
@@ -81,68 +83,143 @@ public class TileManager : MonoBehaviour
             return result;
         }
 
-        var color = start.GetTile.Get_Tile_Color();
+        //start의 색, 위치 가져오기 
+        var startcolor = start.GetTile.Get_Tile_Color();
         var startPoint = start.GetPoint;
+        result.Add(start);
 
-        List<UI_Tile_Slot> line = new List<UI_Tile_Slot>();
-        foreach (var (dx, dy) in i_Directions)
+        //정보 가져오기
+        var dict = Get_Tile_Slot.GroupBy(x => x.GetPoint.Item1).ToDictionary(g => g.Key, g => g.OrderBy(x => x.GetPoint.Item2).ToList());
+
+        //키값
+        var key = (int)start.GetPoint.Item1;
+
+        //내 라인부터 위아래 체크 
+        var valueList = dict[key];
+        int index = valueList.FindIndex(slot => slot.GetPoint == startPoint);
+
+        //내 윗라인 체크
+        for (int i = index; i < valueList.Count; i++)
         {
-            line.Clear();
-            line.Add(start);
+            var tile = valueList[i].GetTile;
 
-            // +방향
-            var nx = startPoint.Item1 + dx;
-            var ny = startPoint.Item2 + dy;
-            while (true)
+            //나는 건너뛰기
+            if (result.Contains(valueList[i]))
             {
-                var neighbor = L_Tile_Slot.Find(slot => slot.GetPoint.Item1 == nx && Mathf.Approximately(slot.GetPoint.Item2, ny));
-                if (neighbor == null || neighbor.GetTile == null)
-                {
-                    break;
-                }
-                // Basic 타입과 같은 색상의 타일만 체크
-                if (neighbor.GetTile.Get_Tile_Kind() != E_Tile_Kind.Basic || neighbor.GetTile.Get_Tile_Color() != color)
-                {
-                    break;
-                }
-                line.Add(neighbor);
-                nx += dx;
-                ny += dy;
+                continue;
             }
 
-            // -방향
-            nx = startPoint.Item1 - dx;
-            ny = startPoint.Item2 - dy;
-            while (true)
+            if (tile == null)
             {
-                var neighbor = L_Tile_Slot.Find(slot => slot.GetPoint.Item1 == nx && Mathf.Approximately(slot.GetPoint.Item2, ny));
-                if (neighbor == null || neighbor.GetTile == null)
-                {
-                    break;
-                }
-                // Basic 타입과 같은 색상의 타일만 체크
-                if (neighbor.GetTile.Get_Tile_Kind() != E_Tile_Kind.Basic || neighbor.GetTile.Get_Tile_Color() != color)
-                {
-                    break;
-                }
-                line.Add(neighbor);
-                nx -= dx;
-                ny -= dy;
+                break;
             }
 
-            // 3개 이상 연속이면 결과에 추가 - 이 방향에서 매치가 발견됨
-            if (line.Count >= 3)
+            //같은 색인지 체크
+            if (tile.Get_Tile_Color() != startcolor)
             {
-                foreach (var slot in line)
-                {
-                    result.Add(slot);
-                }
-                //하나의 그룹만 넘기기
-                return result;
+                break;
             }
+
+            result.Add(tile.Get_Tile_Slot);
         }
 
+        //내 아랫라인 체크
+        for (int i = index; i >= 0; i--)
+        {
+            //나는 건너뛰기
+            if (result.Contains(valueList[i]))
+            {
+                continue;
+            }
+
+            var tile = valueList[i].GetTile;
+            if (tile == null)
+            {
+                break;
+            }
+
+            //같은 색인지 체크
+            if (tile.Get_Tile_Color() != startcolor)
+            {
+                break;
+            }
+
+            result.Add(tile.Get_Tile_Slot);
+        }
+
+        //대각선 오른쪽 위 체크 = key값이 큰것들 중에 y값이 큰값만 가져오고 작은 값부터 나열
+        var diagonal_right_up = dict.Where(x => x.Key > key)
+            .OrderBy(x => x.Key)
+            .Select(x => x.Value.OrderBy(slot => slot.GetPoint.Item2).ToList()
+            .FindAll(slot => slot.GetPoint.Item2 > startPoint.Item2))
+            .ToList();
+
+        //순회하며 나보다 큰 y값중에 같은 색 챙기기
+        result.AddRange(Get_Tile_Slot_GroupList(diagonal_right_up, startcolor));
+
+        //대각선 오른쪽 아래 체크 = key값이 큰 것중에 y값이 작은 값만 가져오고 큰값부터 나열
+        var diagonal_right_down = dict.Where(x => x.Key > key)
+            .OrderBy(x => x.Key)
+            .Select(x => x.Value.OrderBy(slot => slot.GetPoint.Item2).ToList()
+            .FindAll(slot => slot.GetPoint.Item2 < startPoint.Item2))
+            .ToList();
+
+        //순회하며 나보다 큰 y값중에 같은 색 챙기기
+        result.AddRange(Get_Tile_Slot_GroupList(diagonal_right_down, startcolor));
+
+        //대각선 왼쪽 위 체크 = key값이 작은 것 중 y값이 큰 값만 가져오고 작은 값 부터 나열
+        var diagonal_left_up = dict.Where(x => x.Key < key)
+            .OrderBy(x => x.Key)
+            .Select(x => x.Value.OrderBy(slot => slot.GetPoint.Item2).ToList()
+            .FindAll(slot => slot.GetPoint.Item2 > startPoint.Item2))
+            .ToList();
+
+        //순회하며 나보다 큰 y값중에 같은 색 챙기기
+        result.AddRange(Get_Tile_Slot_GroupList(diagonal_left_up, startcolor));
+
+
+        //대각선 왼쪽 아래 체크
+        var diagonal_left_down = dict.Where(x => x.Key < key)
+            .OrderBy(x => x.Key)
+            .Select(x => x.Value.OrderBy(slot => slot.GetPoint.Item2).ToList()
+            .FindAll(slot => slot.GetPoint.Item2 < startPoint.Item2))
+            .ToList();
+
+        //순회하며 나보다 큰 y값중에 같은 색 챙기기
+        result.AddRange(Get_Tile_Slot_GroupList(diagonal_left_down, startcolor));
         return result;
+    }
+
+    /// <summary>
+    /// 순회돌며 리스트 가져오기 
+    /// </summary>
+    /// <returns></returns>
+    HashSet<UI_Tile_Slot> Get_Tile_Slot_GroupList(List<List<UI_Tile_Slot>> list, E_Tile_Color startcolor)
+    {
+        var hs = new HashSet<UI_Tile_Slot>();
+        //순회하며 나보다 큰 y값중에 같은 색 챙기기
+        foreach (var item in list)
+        {
+            bool isadd = false;
+            foreach (var slot in item)
+            {
+                isadd = false;
+                //하나라도 이어지지 않으면 break;
+                if (slot.GetTile.Get_Tile_Color() != startcolor)
+                {
+                    break;
+                }
+                hs.Add(slot);
+                isadd = true;
+            }
+
+            //이어졌는지 체크
+            if (!isadd)
+            {
+                break;
+            }
+        }
+        return hs;
     }
 
     /// <summary>

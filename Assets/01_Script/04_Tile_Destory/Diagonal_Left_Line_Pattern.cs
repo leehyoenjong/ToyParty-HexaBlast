@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public class Diagonal_Left_Pattern : IPatternRecognizer
+public class Diagonal_Left_Line_Pattern : IPatternRecognizer
 {
     public bool IsMatch(HashSet<UI_Tile_Slot> slotlist)
     {
@@ -35,6 +35,6 @@ public class Diagonal_Left_Pattern : IPatternRecognizer
 
     public E_Tile_Destory_Type GetPatternType()
     {
-        return E_Tile_Destory_Type.Diagonal_Left;
+        return E_Tile_Destory_Type.Diagonal_Left_Line;
     }
 }

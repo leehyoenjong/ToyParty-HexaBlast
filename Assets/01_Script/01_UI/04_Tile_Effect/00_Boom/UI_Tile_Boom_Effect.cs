@@ -21,8 +21,7 @@ public class UI_Tile_Boom_Effect : MonoBehaviour
             .OnComplete(() =>
             {
                 // 페이드 아웃
-                Img_ICON.DOFade(0f, 0.25f)
-                    .OnComplete(() => Destroy(this.gameObject));
+                Img_ICON.DOFade(0f, 0.25f).OnComplete(() => Destroy(this.gameObject));
             });
     }
 }
