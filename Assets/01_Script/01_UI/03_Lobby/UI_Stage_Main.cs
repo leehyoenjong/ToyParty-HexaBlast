@@ -23,7 +23,7 @@ public class UI_Stage_Main : MonoBehaviour
     /// </summary>
     void Set_Stage_Slot()
     {
-        L_Stage_Slot = G_Stage_Parent.GetComponentsInChildren<UI_Stage_Slot>();
+        L_Stage_Slot = G_Stage_Parent.GetComponentsInChildren<UI_Stage_Slot>(true);
 
         var max = L_Stage_Slot.Length;
         for (int i = 0; i < max; i++)

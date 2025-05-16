@@ -442,8 +442,9 @@ public class TileManager : MonoBehaviour
         yield return this.WaitForAll(firsttile.Move_Tile(secondslot), secondtile.Move_Tile(firstslot));
 
         //UFO 블록 특수처리
-        var check_ufo_frist = firsttile.Get_Tile_Destory_Type == E_Tile_Destory_Type.UFO;
-        var check_ufo_sconde = secondtile.Get_Tile_Destory_Type == E_Tile_Destory_Type.UFO;
+        var check_ufo_frist = firsttile.Get_Tile_Destory_Type == E_Tile_Destory_Type.UFO && secondtile.Get_Tile_Kind() != E_Tile_Kind.Huddle;
+        var check_ufo_sconde = secondtile.Get_Tile_Destory_Type == E_Tile_Destory_Type.UFO && firsttile.Get_Tile_Kind() != E_Tile_Kind.Huddle;
+
         //둘중 UFO가 아닌 색을 매개변수로 넘김
         if (check_ufo_frist)
         {

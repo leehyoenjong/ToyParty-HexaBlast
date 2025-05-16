@@ -63,23 +63,23 @@ public class UI_Tile_Diagonal : UI_Tile
                     bool prevEven = prevCount % 2 == 0;
                     bool currEven = currCount % 2 == 0;
 
-                    //이전과 지금이 둘다 짝수거나 홀수면 1증가
-                    if (prevEven == currEven)
-                        add_y += 1f;
-                    //이전이 짝수고 지금이 홀수이거나 또는 반대면 0.5증가
-                    else
-                        add_y += 0.5f;
+                        //이전과 지금이 둘다 짝수거나 홀수면 1증가
+                        if (prevEven == currEven)
+                            add_y += 1f;
+                        //이전이 짝수고 지금이 홀수이거나 또는 반대면 0.5증가
+                        else
+                            add_y += 0.5f;
 
-                    foreach (var item in dict[i])
-                    {
-                        if (add_y > item.GetPoint.Item2)
-                            continue;
+                        foreach (var item in dict[i])
+                        {
+                            if (add_y > item.GetPoint.Item2)
+                                continue;
 
-                        removelist.Add(item);
-                        break;
+                            removelist.Add(item);
+                            break;
+                        }
+                        prevCount = currCount;
                     }
-                    prevCount = currCount;
-                }
 
                 //왼쪽 체크
                 dict = slotlist.GroupBy(x => x.GetPoint.Item1).ToDictionary(g => g.Key, g => g.OrderByDescending(x => x.GetPoint.Item2).ToList());
@@ -92,15 +92,15 @@ public class UI_Tile_Diagonal : UI_Tile
                     bool prevEven = prevCount % 2 == 0;
                     bool currEven = currCount % 2 == 0;
 
-                    if (prevEven == currEven)
-                        add_y -= 1f;
-                    else
-                        add_y -= 0.5f;
+                        if (prevEven == currEven)
+                            add_y -= 1f;
+                        else
+                            add_y -= 0.5f;
 
-                    foreach (var item in dict[i])
-                    {
-                        if (add_y < item.GetPoint.Item2)
-                            continue;
+                        foreach (var item in dict[i])
+                        {
+                            if (add_y < item.GetPoint.Item2)
+                                continue;
 
                         removelist.Add(item);
                         break;
@@ -113,35 +113,35 @@ public class UI_Tile_Diagonal : UI_Tile
                 //딕셔너리 형태로 x.GetPoint.Item1이 key값, List<UI_Tile_Slot>를 value값으로 하되, value값은 x.GetPoint.Item2가 작은거부터 나열 
                 dict = slotlist.GroupBy(x => x.GetPoint.Item1).ToDictionary(g => g.Key, g => g.OrderBy(x => x.GetPoint.Item2).ToList());
 
-                //오른쪽 체크
-                min = dict.Min(x => x.Value.Min(x => x.GetPoint.Item1));
+                    //오른쪽 체크
+                    min = dict.Min(x => x.Value.Min(x => x.GetPoint.Item1));
 
                 add_y = -pos.Item2;
                 prevCount = dict[(int)pos.Item1].Count;
                 for (int i = (int)pos.Item1 - 1; i >= min; i--)
 
-                {
-                    var currCount = dict[i].Count;
-                    bool prevEven = prevCount % 2 == 0;
-                    bool currEven = currCount % 2 == 0;
-
-                    //이전과 지금이 둘다 짝수거나 홀수면 1증가
-                    if (prevEven == currEven)
-                        add_y += 1f;
-                    //이전이 짝수고 지금이 홀수이거나 또는 반대면 0.5증가
-                    else
-                        add_y += 0.5f;
-
-                    foreach (var item in dict[i])
                     {
-                        if (add_y > item.GetPoint.Item2)
-                            continue;
+                        var currCount = dict[i].Count;
+                        bool prevEven = prevCount % 2 == 0;
+                        bool currEven = currCount % 2 == 0;
 
-                        removelist.Add(item);
-                        break;
+                        //이전과 지금이 둘다 짝수거나 홀수면 1증가
+                        if (prevEven == currEven)
+                            add_y += 1f;
+                        //이전이 짝수고 지금이 홀수이거나 또는 반대면 0.5증가
+                        else
+                            add_y += 0.5f;
+
+                        foreach (var item in dict[i])
+                        {
+                            if (add_y > item.GetPoint.Item2)
+                                continue;
+
+                            removelist.Add(item);
+                            break;
+                        }
+                        prevCount = currCount;
                     }
-                    prevCount = currCount;
-                }
 
                 //왼쪽 체크
                 dict = slotlist.GroupBy(x => x.GetPoint.Item1).ToDictionary(g => g.Key, g => g.OrderByDescending(x => x.GetPoint.Item2).ToList());
@@ -154,23 +154,23 @@ public class UI_Tile_Diagonal : UI_Tile
                     bool prevEven = prevCount % 2 == 0;
                     bool currEven = currCount % 2 == 0;
 
-                    if (prevEven == currEven)
-                        add_y -= 1f;
-                    else
-                        add_y -= 0.5f;
+                        if (prevEven == currEven)
+                            add_y -= 1f;
+                        else
+                            add_y -= 0.5f;
 
-                    foreach (var item in dict[i])
-                    {
-                        if (add_y < item.GetPoint.Item2)
-                            continue;
+                        foreach (var item in dict[i])
+                        {
+                            if (add_y < item.GetPoint.Item2)
+                                continue;
 
-                        removelist.Add(item);
-                        break;
+                            removelist.Add(item);
+                            break;
+                        }
+                        prevCount = currCount;
                     }
-                    prevCount = currCount;
-                }
-                break;
-        }
+                    break;
+            }
 
         //타입에 따른 타일제거
         foreach (var item in removelist)
